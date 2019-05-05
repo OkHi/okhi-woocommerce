@@ -47,7 +47,7 @@ if (!class_exists('WC_OkHi_Integration')):
                     'description' => __('Enter your development API Key'),
                     'desc_tip' => true,
                     'default' => '',
-                    'css' => 'width:270px;',
+                    'css' => 'width:300px;',
                 ),
                 'okhi_api_key' => array(
                     'title' => __('Production API Key'),
@@ -55,7 +55,7 @@ if (!class_exists('WC_OkHi_Integration')):
                     'description' => __('Enter API Key'),
                     'desc_tip' => true,
                     'default' => '',
-                    'css' => 'width:270px;',
+                    'css' => 'width:300px;',
                 ),
             );
         }

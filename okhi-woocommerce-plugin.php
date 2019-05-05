@@ -13,42 +13,47 @@
  * Version: 1.0.0
  */
 if (!class_exists('WC_OkHi_integration_plugin')):
-  class WC_OkHi_integration_plugin {
-    /**
-     * Construct the plugin.
-     */
-    public function __construct(){
-        add_action('plugins_loaded', array($this, 'init'));
+    class WC_OkHi_integration_plugin
+{
+        /**
+         * Construct the plugin.
+         */
+        public function __construct()
+    {
+            add_action('plugins_loaded', array($this, 'init'));
+        }
+        /**
+         * Initialize the plugin.
+         */
+        public function init()
+    {
+            // Checks if WooCommerce is installed.
+            if (class_exists('WC_Integration')) {
+                // Include our integration class.
+                include_once 'includes/class-okhi-api-wc-integration.php';
+                // Register the integration.
+                add_filter('woocommerce_integrations', array($this, 'add_integration'));
+                // Set the plugin slug
+                define('OkHi_integration_slug', 'wc-settings');
+                // Setting action for plugin
+                add_filter('plugin_action_links_' . plugin_basename(__FILE__), 'WC_OkHi_integration_plugin_action_links');
+            }
+        }
+        /**
+         * Add a new integration to WooCommerce.
+         */
+        public function add_integration($integrations)
+    {
+            $integrations[] = 'WC_OkHi_Integration';
+            return $integrations;
+        }
     }
-    /**
-    * Initialize the plugin.
-    */
-    public function init(){
-      // Checks if WooCommerce is installed.
-      if (class_exists('WC_Integration')) {
-        // Include our integration class.
-        include_once 'includes/class-okhi-api-wc-integration.php';
-        // Register the integration.
-        add_filter('woocommerce_integrations', array($this, 'add_integration'));
-        // Set the plugin slug
-        define('OkHi_integration_slug', 'wc-settings');
-        // Setting action for plugin
-        add_filter('plugin_action_links_' . plugin_basename(__FILE__), 'WC_OkHi_integration_plugin_action_links');
-      }
+    $WC_OkHi_integration_plugin = new WC_OkHi_integration_plugin(__FILE__);
+    function WC_OkHi_integration_plugin_action_links($links)
+{
+        $links[] = '<a href="' . menu_page_url(OkHi_integration_slug, false) . '&tab=integration">Settings</a>';
+        return $links;
     }
-    /**
-     * Add a new integration to WooCommerce.
-     */
-    public function add_integration($integrations) {
-      $integrations[] = 'WC_OkHi_Integration';
-      return $integrations;
-    }
-  }
-  $WC_OkHi_integration_plugin = new WC_OkHi_integration_plugin(__FILE__);
-  function WC_OkHi_integration_plugin_action_links($links) {
-    $links[] = '<a href="' . menu_page_url(OkHi_integration_slug, false) . '&tab=integration">Settings</a>';
-    return $links;
-  }
 endif;
 
 // Remove all fields but names and phone
@@ -59,7 +64,8 @@ add_filter('woocommerce_checkout_fields', 'custom_override_checkout_fields');
  * Add: billing_okhi_location_data, billing_okhi_id, billing_okhi_url
  * Make optional: billing_address_1
  */
-function custom_override_checkout_fields($fields) {
+function custom_override_checkout_fields($fields)
+{
     $fields['billing']['billing_first_name'] = array(
         'label' => __('First name', 'woocommerce'),
         'required' => false,
@@ -79,7 +85,7 @@ function custom_override_checkout_fields($fields) {
         'class' => array('form-row-wide'),
         'clear' => true,
     );
-    $fields['billing']['billing_address_1'] = array(
+    // $fields['billing']['billing_address_1'] = array(
         'label' => __('Where should we deliver to?', 'woocommerce'),
         'required' => false,
         'class' => array('form-row-wide'),
@@ -111,7 +117,7 @@ function custom_override_checkout_fields($fields) {
     );
     // remove irrelevant fields
     unset($fields['billing']['billing_company']);
-    unset($fields['billing']['billing_address_2']);
+    // unset($fields['billing']['billing_address_2']);
     unset($fields['billing']['billing_city']);
     // unset($fields['billing']['billing_email']);
     unset($fields['billing']['billing_state']);
@@ -123,7 +129,8 @@ function custom_override_checkout_fields($fields) {
  */
 add_action('woocommerce_checkout_update_order_meta', 'my_custom_checkout_field_update_order_meta');
 
-function my_custom_checkout_field_update_order_meta($order_id) {
+function my_custom_checkout_field_update_order_meta($order_id)
+{
     if (!empty($_POST['billing_okhi_id'])) {
         update_post_meta($order_id, 'billing_okhi_id', sanitize_text_field($_POST['billing_okhi_id']));
     }
@@ -140,7 +147,8 @@ function my_custom_checkout_field_update_order_meta($order_id) {
  */
 add_action('woocommerce_admin_order_data_after_billing_address', 'my_custom_checkout_field_display_admin_order_meta', 10, 1);
 
-function my_custom_checkout_field_display_admin_order_meta($order) {
+function my_custom_checkout_field_display_admin_order_meta($order)
+{
     echo '<p><strong>' . __('OkHi ID') . ':</strong> <br/>' . get_post_meta($order->get_id(), 'billing_okhi_id', true) . '</p>';
     echo '<p><strong>' . __('OkHi URL') . ':</strong> <br/><a href="' . get_post_meta($order->get_id(), 'billing_okhi_url', true) . '" target="_blank">' . get_post_meta($order->get_id(), 'billing_okhi_url', true) . '</a></p>';
     echo '<p><strong>' . __('OkHi Data') . ':</strong> <br/>' . get_post_meta($order->get_id(), 'billing_okhi_location_data', true) . '</p>';
@@ -151,7 +159,8 @@ add_action('woocommerce_after_checkout_billing_form', 'add_okhi_form', 10);
 /**
  * Display okhi form
  */
-function add_okhi_form() {
+function add_okhi_form()
+{
     $my_settings = get_option('woocommerce_okhi-integration_settings');
     $env = isset($my_settings['okhi_is_production_ready']) && $my_settings['okhi_is_production_ready'] !== 'no' ? 'prod' : 'dev';
     $api_key = $env === 'prod' ? $my_settings['okhi_api_key'] : $my_settings['okhi_dev_api_key'];
@@ -208,15 +217,45 @@ function add_okhi_form() {
         jQuery(document.body).trigger('update_checkout');
       });
     }
-    var handleOnSuccess = function(data) {
+    var handleOnSuccessCard = function(data) {
+      handleOnSuccess(data,true)
+    }
+    var showLocationCard = function(data) {
+      var locationCard = document.getElementById('selected-location-card');
+      var deliveryLocationButton = document.getElementById('lets-okhi');
+      if(locationCard.innerHTML !== '') {
+        return;
+      }
+
+      var currentLocationObject = data.location ? data.location : null;
+      if('<?=WC()->customer->get_billing_phone()?>'){
+        // this flow is valid only for new users
+        return;
+      }
+      deliveryLocationButton.style.display = 'none';
+      locationCard.innerHTML = '';
+      locationCard.style.display = 'block';
+      var locationCard = new okhi.LocationCard({
+        element: locationCard, // required
+        user: data.user, // required
+        onSuccess: handleOnSuccessCard, // optional
+        onError: handleOnError, // optional
+        style: style, // optional
+        location: currentLocationObject,
+        copy: {
+          createOtherInformation: 'Delivery instructions'
+        } // optional
+      });
+    };
+    var handleOnSuccess = function(data, isCallBackCard) {
       // handle your success here with the data you get back
-      populatePlusCode(data.location.lat, data.location.lng);
       if (!data || !data.location) {
         return
       }
+      populatePlusCode(data.location.lat, data.location.lng);
       var locationRawData = document.getElementById('billing_okhi_location_data');
       var deliveryNotes = document.getElementById('order_comments');
-      var billingAddress1 = document.getElementById('_billing_address_1');
+      var billingAddress1 = document.getElementById('billing_address_1');
       var locationOkHiId = document.getElementById('billing_okhi_id');
       var okhiURL = document.getElementById('billing_okhi_url');
 
@@ -235,6 +274,9 @@ function add_okhi_form() {
       if (billingAddress1 && data.location.streetName) {
         billingAddress1.value = data.location.streetName;
       }
+      if(!isCallBackCard && !'<?=WC()->customer->get_billing_phone()?>'){
+        showLocationCard(data);
+      }
     };
 
     var handleOnError = function(error) {
@@ -251,10 +293,10 @@ function add_okhi_form() {
     };
   </script>
 <?php
-    /**
-    * returning user flow
-    * render card
-    */
+/**
+     * returning user flow
+     * render card
+     */
     if (WC()->customer->get_billing_phone()) {
         ?>
     <div
@@ -283,14 +325,15 @@ function add_okhi_form() {
     </script>
 <?php
 } else {
-  /**
-   * new user flow
-   * render button
-   */
-?>
+        /**
+         * new user flow
+         * render button
+         */
+        ?>
   <button class="button alt" id="lets-okhi">
     Delivery location
   </button>
+  <div id="selected-location-card" style="height:300px; display:none"></div>
   <script type="text/javascript">
     var deliveryLocationButton = document.getElementById('lets-okhi');
     var handleButtonClick = function(e) {
@@ -367,8 +410,9 @@ function disable_shipping_calc_on_cart($show_shipping)
 add_filter('woocommerce_cart_ready_to_calc_shipping', 'disable_shipping_calc_on_cart', 99);
 
 // send the checkout to okhi
-function post_without_wait($url, $data, $api_key) {
-  // TODO
+function post_without_wait($url, $data, $api_key)
+{
+    // TODO
 }
 add_action('woocommerce_order_status_processing', 'send_order_details');
 function send_order_details($order_id)
@@ -385,7 +429,7 @@ function send_order_details($order_id)
             "lastName" => WC()->customer->get_last_name(),
             "phone" => WC()->customer->get_billing_phone(),
         ),
-        "id" => (string)$order->get_id(),
+        "id" => (string) $order->get_id(),
         "location" => isset($order_meta['billing_okhi_location_data']) ? json_decode($order_meta['billing_okhi_location_data'][0]) : '',
         "locationId" => isset($order_meta['_billing_okhi_id']) ? $order_meta['_billing_okhi_id'][0] : '',
         "paymentMethod" => $order->payment_method,
