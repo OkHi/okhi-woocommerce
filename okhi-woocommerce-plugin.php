@@ -9,7 +9,8 @@
  * Plugin Name: OkHi WooCommerce Plugin
  * Plugin URI: https://www.okhi.com/business
  * Description: OkHi Integration to enable WooCommerce checkout with OkHi.
- * Author:  Evans Mutai
+ * Author:  OkHi
+ * Author URI: https://okhi.com/
  * Version: 1.0.0
  */
 if (!class_exists('WC_OkHi_integration_plugin')):
@@ -51,20 +52,21 @@ if (!class_exists('WC_OkHi_integration_plugin')):
     $WC_OkHi_integration_plugin = new WC_OkHi_integration_plugin(__FILE__);
     function WC_OkHi_integration_plugin_action_links($links)
 {
-        $links[] = '<a href="' . menu_page_url(OkHi_integration_slug, false) . '&tab=integration">Settings</a>';
+        $links[] = '<a href="' . menu_page_url(OkHi_integration_slug, false) . '&tab=integration&section=okhi-integration">Settings</a>';
         return $links;
     }
 endif;
 
 // Remove all fields but names and phone
-add_filter('woocommerce_checkout_fields', 'custom_override_checkout_fields');
+add_filter('woocommerce_checkout_fields', 'okhi_override_checkout_fields');
 
 /**
  * Remove: billing_company, billing_address_2, billing_city, billing_email, billing_state
  * Add: billing_okhi_location_data, billing_okhi_id, billing_okhi_url
- * Make optional: billing_address_1
+ * change: wc error to state a value is required and not a field
+ * Make optional: billing_postcode
  */
-function custom_override_checkout_fields($fields)
+function okhi_override_checkout_fields($fields)
 {
     $fields['billing']['billing_first_name'] = array(
         'label' => __('First name', 'woocommerce'),
@@ -85,9 +87,9 @@ function custom_override_checkout_fields($fields)
         'class' => array('form-row-wide'),
         'clear' => true,
     );
-    // $fields['billing']['billing_address_1'] = array(
-        'label' => __('Where should we deliver to?', 'woocommerce'),
-        'required' => false,
+    $fields['billing']['billing_address_1'] = array(
+        'label' => __('Delivery location', 'woocommerce'),
+        'required' => true,
         'class' => array('form-row-wide'),
         'clear' => true,
     );
@@ -117,7 +119,7 @@ function custom_override_checkout_fields($fields)
     );
     // remove irrelevant fields
     unset($fields['billing']['billing_company']);
-    // unset($fields['billing']['billing_address_2']);
+    unset($fields['billing']['billing_address_2']);
     unset($fields['billing']['billing_city']);
     // unset($fields['billing']['billing_email']);
     unset($fields['billing']['billing_state']);
@@ -127,9 +129,9 @@ function custom_override_checkout_fields($fields)
 /**
  * Update the order meta with field value
  */
-add_action('woocommerce_checkout_update_order_meta', 'my_custom_checkout_field_update_order_meta');
+add_action('woocommerce_checkout_update_order_meta', 'okhi_checkout_field_update_order_meta');
 
-function my_custom_checkout_field_update_order_meta($order_id)
+function okhi_checkout_field_update_order_meta($order_id)
 {
     if (!empty($_POST['billing_okhi_id'])) {
         update_post_meta($order_id, 'billing_okhi_id', sanitize_text_field($_POST['billing_okhi_id']));
@@ -145,13 +147,28 @@ function my_custom_checkout_field_update_order_meta($order_id)
 /**
  * Display field value on the order edit page
  */
-add_action('woocommerce_admin_order_data_after_billing_address', 'my_custom_checkout_field_display_admin_order_meta', 10, 1);
+add_action('woocommerce_admin_order_data_after_billing_address', 'okhi_checkout_field_display_admin_order_meta', 10, 1);
 
-function my_custom_checkout_field_display_admin_order_meta($order)
+function okhi_checkout_field_display_admin_order_meta($order)
 {
     echo '<p><strong>' . __('OkHi ID') . ':</strong> <br/>' . get_post_meta($order->get_id(), 'billing_okhi_id', true) . '</p>';
     echo '<p><strong>' . __('OkHi URL') . ':</strong> <br/><a href="' . get_post_meta($order->get_id(), 'billing_okhi_url', true) . '" target="_blank">' . get_post_meta($order->get_id(), 'billing_okhi_url', true) . '</a></p>';
     echo '<p><strong>' . __('OkHi Data') . ':</strong> <br/>' . get_post_meta($order->get_id(), 'billing_okhi_location_data', true) . '</p>';
+}
+
+/**
+ * Remove the word billing from billing field errors
+ */
+add_filter('woocommerce_add_error', 'okhi_customize_wc_errors');
+function okhi_customize_wc_errors($error)
+{
+    if (strpos($error, 'Billing ') !== false) {
+        $error = str_replace("Billing ", "", $error);
+    }
+    if (strpos($error, 'is a required field.') !== false) {
+        $error = str_replace("is a required field.", "is required.", $error);
+    }
+    return $error;
 }
 
 add_action('woocommerce_after_checkout_billing_form', 'add_okhi_form', 10);
@@ -191,9 +208,9 @@ function add_okhi_form()
     });
     var style = {
       base: {
-        name: 'OkHi',
-        color: 'rgb(0, 131, 143)',
-        logo: 'https://cdn.okhi.co/okhi-logo-white.svg'
+        // name: 'OkHi',
+        color: '<?=$my_settings['okhi_header_background_color']?>',
+        logo: '<?=$my_settings['okhi_logo']?>'
       }
     };
     var copy = {
@@ -203,20 +220,6 @@ function add_okhi_form()
       selectLocation: 'Select a delivery location',
       upsellMessage: 'Create your first delivery location with OkHi!',
     };
-    var populatePlusCode = function(lat, lng) {
-      var settings = {
-        "async": true,
-        "crossDomain": true,
-        "url": "https://plus.codes/api?address=" + lat + "," + lng,
-        "method": "GET",
-      }
-
-      jQuery.ajax(settings).done(function(response) {
-        var postcode = document.getElementById('billing_postcode');
-        postcode.value = response.plus_code.global_code;
-        jQuery(document.body).trigger('update_checkout');
-      });
-    }
     var handleOnSuccessCard = function(data) {
       handleOnSuccess(data,true)
     }
@@ -252,19 +255,13 @@ function add_okhi_form()
       if (!data || !data.location) {
         return
       }
-      populatePlusCode(data.location.lat, data.location.lng);
       var locationRawData = document.getElementById('billing_okhi_location_data');
       var deliveryNotes = document.getElementById('order_comments');
       var billingAddress1 = document.getElementById('billing_address_1');
       var locationOkHiId = document.getElementById('billing_okhi_id');
       var okhiURL = document.getElementById('billing_okhi_url');
+      var postcode = document.getElementById('billing_postcode');
 
-      if (locationOkHiId && data.location.id) {
-        locationOkHiId.value = data.location.id;
-      }
-      if (okhiURL && data.location.url) {
-        okhiURL.value = data.location.url;
-      }
       if (locationRawData && data.location) {
         locationRawData.value = JSON.stringify(data.location);
       }
@@ -274,6 +271,19 @@ function add_okhi_form()
       if (billingAddress1 && data.location.streetName) {
         billingAddress1.value = data.location.streetName;
       }
+      if (locationOkHiId && data.location.id) {
+        locationOkHiId.value = data.location.id;
+      }
+      if (okhiURL && data.location.url) {
+        okhiURL.value = data.location.url;
+      }
+      if (postcode && data.location.url) {
+        postcode.value = data.location.plusCode;
+      }
+
+      // trigger calculation of shipping costs
+      jQuery(document.body).trigger('update_checkout');
+
       if(!isCallBackCard && !'<?=WC()->customer->get_billing_phone()?>'){
         showLocationCard(data);
       }
@@ -382,7 +392,7 @@ function add_okhi_form()
 /**
  * change checkout page titles
  */
-function wc_billing_field_strings($translated_text, $text, $domain)
+function okhi_wc_billing_field_strings($translated_text, $text, $domain)
 {
     switch ($translated_text) {
         case 'Billing details':
@@ -394,28 +404,28 @@ function wc_billing_field_strings($translated_text, $text, $domain)
     }
     return $translated_text;
 }
-add_filter('gettext', 'wc_billing_field_strings', 20, 3);
+add_filter('gettext', 'okhi_wc_billing_field_strings', 20, 3);
 
 /**
  * remove shipping cost in cart
  */
 
-function disable_shipping_calc_on_cart($show_shipping)
+function okhi_disable_shipping_calc_on_cart($show_shipping)
 {
     if (is_cart()) {
         return false;
     }
     return $show_shipping;
 }
-add_filter('woocommerce_cart_ready_to_calc_shipping', 'disable_shipping_calc_on_cart', 99);
+add_filter('woocommerce_cart_ready_to_calc_shipping', 'okhi_disable_shipping_calc_on_cart', 99);
 
 // send the checkout to okhi
 function post_without_wait($url, $data, $api_key)
 {
     // TODO
 }
-add_action('woocommerce_order_status_processing', 'send_order_details');
-function send_order_details($order_id)
+add_action('woocommerce_order_status_processing', 'okhi_send_order_details');
+function okhi_send_order_details($order_id)
 {
     $my_settings = get_option('woocommerce_okhi-integration_settings');
     $env = isset($my_settings['okhi_is_production_ready']) && $my_settings['okhi_is_production_ready'] !== 'no' ? 'prod' : 'dev';

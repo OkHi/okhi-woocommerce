@@ -1,1 +1,0 @@
-# okhi-woocommerce-plugin

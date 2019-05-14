@@ -4,7 +4,7 @@
  *
  * @package   Woocommerce OkHi Integration
  * @category Integration
- * @author   Evans Mutai
+ * @author   OkHi
  */
 if (!class_exists('WC_OkHi_Integration')):
     class WC_OkHi_Integration extends WC_Integration
@@ -47,7 +47,7 @@ if (!class_exists('WC_OkHi_Integration')):
                     'description' => __('Enter your development API Key'),
                     'desc_tip' => true,
                     'default' => '',
-                    'css' => 'width:300px;',
+                    'css' => 'width:270px;',
                 ),
                 'okhi_api_key' => array(
                     'title' => __('Production API Key'),
@@ -55,7 +55,23 @@ if (!class_exists('WC_OkHi_Integration')):
                     'description' => __('Enter API Key'),
                     'desc_tip' => true,
                     'default' => '',
-                    'css' => 'width:300px;',
+                    'css' => 'width:270px;',
+                ),
+                'okhi_logo' => array(
+                    'title' => __('Path to your logo'),
+                    'type' => 'text',
+                    'description' => __('eg. https: //cdn.okhi.co/okhi-logo-white.svg'),
+                    'desc_tip' => true,
+                    'default' => 'https://cdn.okhi.co/okhi-logo-white.svg',
+                    'css' => 'width:270px;',
+                ),
+                'okhi_header_background_color' => array(
+                    'title' => __('Header background color'),
+                    'type' => 'text',
+                    'description' => __(' eg. rgb(0, 131, 143)'),
+                    'desc_tip' => true,
+                    'default' => 'rgb(0, 131, 143)',
+                    'css' => 'width:270px;',
                 ),
             );
         }
