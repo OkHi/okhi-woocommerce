@@ -70,7 +70,7 @@ function okhi_override_checkout_fields($fields)
 {
     $fields['billing']['billing_first_name'] = array(
         'label' => __('First name', 'woocommerce'),
-        'required' => false,
+        'required' => true,
         'class' => array('form-row-wide'),
         'clear' => true,
     );
