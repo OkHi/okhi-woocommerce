@@ -13,6 +13,17 @@
  * Author URI: https://okhi.com/
  * Version: 1.0.0
  */
+/**
+ * Check if WooCommerce is active
+ **/
+if (!defined('ABSPATH')) {
+    exit; // Exit if accessed directly
+}
+
+if (!in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_option('active_plugins')))) {
+    return; // Stop right there if woocommerce is inactive
+}
+
 if (!class_exists('WC_OkHi_integration_plugin')):
     class WC_OkHi_integration_plugin
 {
@@ -56,7 +67,22 @@ if (!class_exists('WC_OkHi_integration_plugin')):
         return $links;
     }
 endif;
+define('OKHI_PLUGIN_PATH', plugin_dir_path(__FILE__));
+define('OKHI_SETTINGS', get_option('woocommerce_okhi-integration_settings'));
+define('OKHI_ENV', isset(OKHI_SETTINGS['okhi_is_production_ready']) && OKHI_SETTINGS['okhi_is_production_ready'] !== 'no' ? 'prod' : 'dev');
+define('OKHI_API_KEY', OKHI_ENV === 'prod' ? OKHI_SETTINGS['okhi_api_key'] : OKHI_SETTINGS['okhi_dev_api_key']);
+define('OKHI_HEADER_BACKGROUND_COLOR', OKHI_SETTINGS['okhi_header_background_color']);
+define('OKHI_CUSTOMER_LOGO', OKHI_SETTINGS['okhi_logo']);
+// $my_settings = get_option('woocommerce_okhi-integration_settings');
+// $env = isset($my_settings['okhi_is_production_ready']) && $my_settings['okhi_is_production_ready'] !== 'no' ? 'prod' : 'dev';
+// $api_key = $env === 'prod' ? $my_settings['okhi_api_key'] : $my_settings['okhi_dev_api_key'];
 
+// register styles
+wp_register_style('okhi-style', plugins_url( '/assets/css/styles.css', __FILE__ ));
+wp_register_script('okhi-lib', 'https://cdn.okhi.io/'.OKHI_ENV.'/web/v4/okhi.min.js');
+wp_register_script('okhi-common-functions', plugins_url('/assets/js/common-functions.js', __FILE__));
+wp_register_script('okhi-new-user', plugins_url( '/assets/js/okhi-new-user.js', __FILE__ ));
+wp_register_script('okhi-repeat-user', plugins_url( '/assets/js/okhi-repeat-user.js', __FILE__ ));
 // Remove all fields but names and phone
 add_filter('woocommerce_checkout_fields', 'okhi_override_checkout_fields');
 
@@ -176,219 +202,65 @@ add_action('woocommerce_after_checkout_billing_form', 'add_okhi_form', 10);
 /**
  * Display okhi form
  */
+function initialise_okhi_js()
+{
+    wp_enqueue_script('okhi-lib');
+    wp_enqueue_script('okhi-common-functions');
+    wp_add_inline_script('okhi-lib', 'try{var okhi = new OkHi({ apiKey: \''.OKHI_API_KEY.'\' });}catch(e){console.error(e)}');
+    $customerStyles = array('base' => array(
+        'color' => OKHI_HEADER_BACKGROUND_COLOR,
+        'logo' => OKHI_CUSTOMER_LOGO
+      ));
+    wp_add_inline_script('okhi-lib','var okhi_widget_styles ='.json_encode($customerStyles));
+}
+add_action('wp_enqueue_scripts', 'initialise_okhi_js');
+
 function add_okhi_form()
 {
+  
     $my_settings = get_option('woocommerce_okhi-integration_settings');
     $env = isset($my_settings['okhi_is_production_ready']) && $my_settings['okhi_is_production_ready'] !== 'no' ? 'prod' : 'dev';
     $api_key = $env === 'prod' ? $my_settings['okhi_api_key'] : $my_settings['okhi_dev_api_key'];
-    ?>
-  <style>
-    #okhi-errors {
-      color: red;
-    }
-    button#lets-okhi {
-      font-size: 1.41575em;
-      width: 100%;
-    }
-    #billing_country_field,
-    #billing_address_1_field,
-    #billing_postcode_field,
-    #billing_okhi_location_data_field,
-    #billing_okhi_id_field,
-    #billing_okhi_url_field,
-    .woocommerce-additional-fields{
-      display: none!important;
-    }
-  </style>
+    wp_enqueue_style('okhi-style');
+    // wp_enqueue_script('okhi-lib');
+    
+
+?>
   <div id="okhi-errors"></div>
-  <script src="https://cdn.okhi.io/<?=$env?>/web/v4/okhi.min.js"></script>
   <script type="text/javascript">
-    var okhi = new OkHi({
-      apiKey: '<?=$api_key?>'
-    });
-    var style = {
-      base: {
-        // name: 'OkHi',
-        color: '<?=$my_settings['okhi_header_background_color']?>',
-        logo: '<?=$my_settings['okhi_logo']?>'
-      }
-    };
-    var copy = {
-      createOtherInformation: 'Create your delivery location',
-      updateOtherInformation: 'Change your delivery notes',
-      createLocation: 'Create a new pickup location',
-      selectLocation: 'Select a delivery location',
-      upsellMessage: 'Create your first delivery location with OkHi!',
-    };
-    var handleOnSuccessCard = function(data) {
-      handleOnSuccess(data,true)
-    }
-    var showLocationCard = function(data) {
-      var locationCard = document.getElementById('selected-location-card');
-      var deliveryLocationButton = document.getElementById('lets-okhi');
-      if(locationCard.innerHTML !== '') {
-        return;
-      }
-
-      var currentLocationObject = data.location ? data.location : null;
-      if('<?=WC()->customer->get_billing_phone()?>'){
-        // this flow is valid only for new users
-        return;
-      }
-      deliveryLocationButton.style.display = 'none';
-      locationCard.innerHTML = '';
-      locationCard.style.display = 'block';
-      var locationCard = new okhi.LocationCard({
-        element: locationCard, // required
-        user: data.user, // required
-        onSuccess: handleOnSuccessCard, // optional
-        onError: handleOnError, // optional
-        style: style, // optional
-        location: currentLocationObject,
-        copy: {
-          createOtherInformation: 'Delivery instructions'
-        } // optional
-      });
-    };
-    var handleOnSuccess = function(data, isCallBackCard) {
-      // handle your success here with the data you get back
-      if (!data || !data.location) {
-        return
-      }
-      var locationRawData = document.getElementById('billing_okhi_location_data');
-      var deliveryNotes = document.getElementById('order_comments');
-      var billingAddress1 = document.getElementById('billing_address_1');
-      var locationOkHiId = document.getElementById('billing_okhi_id');
-      var okhiURL = document.getElementById('billing_okhi_url');
-      var postcode = document.getElementById('billing_postcode');
-
-      if (locationRawData && data.location) {
-        locationRawData.value = JSON.stringify(data.location);
-      }
-      if (deliveryNotes && data.location.otherInformation) {
-        deliveryNotes.value = data.location.otherInformation;
-      }
-      if (billingAddress1 && data.location.streetName) {
-        billingAddress1.value = data.location.streetName;
-      }
-      if (locationOkHiId && data.location.id) {
-        locationOkHiId.value = data.location.id;
-      }
-      if (okhiURL && data.location.url) {
-        okhiURL.value = data.location.url;
-      }
-      if (postcode && data.location.url) {
-        postcode.value = data.location.plusCode;
-      }
-
-      // trigger calculation of shipping costs
-      jQuery(document.body).trigger('update_checkout');
-
-      if(!isCallBackCard && !'<?=WC()->customer->get_billing_phone()?>'){
-        showLocationCard(data);
-      }
-    };
-
-    var handleOnError = function(error) {
-      var errorElement = document.getElementById('okhi-errors');
-      if(!errorElement) {
-        return;
-      }
-      if(!error) {
-        errorElement.innerHTML = "";
-        return;
-      }
-      // handle errors here e.g fallback to your own way of collecting a location information
-      errorElement.innerHTML = error.message ? error.message : 'Something went wrong please try again';
-    };
+    
+    
   </script>
+  <div
+    id="selected-location-card"
+    style="height:200px"
+    data-firstname="<?=WC()->customer->get_first_name()?>"
+    data-lastname="<?=WC()->customer->get_last_name()?>"
+    data-phone="<?=WC()->customer->get_billing_phone()?>"
+  ></div>
+  
 <?php
 /**
-     * returning user flow
-     * render card
-     */
-    if (WC()->customer->get_billing_phone()) {
-        ?>
-    <div
-      id="lets-okhi"
-      style="height:300px"
-      data-firstname="<?=WC()->customer->get_first_name()?>"
-      data-lastname="<?=WC()->customer->get_last_name()?>"
-      data-phone="<?=WC()->customer->get_billing_phone()?>"
-    >
-    </div>
-    <script type="text/javascript">
-      var deliveryLocationCard = document.getElementById('lets-okhi');
-      var user = {
-        firstName: deliveryLocationCard.getAttribute('data-firstname'),
-        lastName: deliveryLocationCard.getAttribute('data-lastname'),
-        phone: deliveryLocationCard.getAttribute('data-phone'),
-      };
-      var locationCard = new okhi.LocationCard({
-        element: deliveryLocationCard,
-        user: user,
-        onSuccess: handleOnSuccess,
-        onError: handleOnError,
-        style: style,
-        // copy: copy,
-      });
-    </script>
+ * returning user flow
+ * render card
+ */
+  if (WC()->customer->get_billing_phone()):
+?>
 <?php
-} else {
-        /**
-         * new user flow
-         * render button
-         */
-        ?>
-  <button class="button alt" id="lets-okhi">
-    Delivery location
-  </button>
-  <div id="selected-location-card" style="height:300px; display:none"></div>
-  <script type="text/javascript">
-    var deliveryLocationButton = document.getElementById('lets-okhi');
-    var handleButtonClick = function(e) {
-      if (e) {
-        e.preventDefault();
-      }
-      // reset errors
-      handleOnError(null);
-      //process the data
-      var firstName = document.getElementById('billing_first_name');
-      var lastName = document.getElementById('billing_last_name');
-      var phone = document.getElementById('billing_phone');
-      if (!phone || !phone.value) {
-        return handleOnError(new Error('Missing phone number'));
-      }
-      var user = {
-        phone: phone.value,
-        firstName: firstName ? firstName.value : '',
-        lastName: lastName ? lastName.value : '',
-      };
-      var locationManager = new okhi.LocationManager({
-        user: user,
-        onSuccess: handleOnSuccess,
-        onError: handleOnError,
-        style: style
-      });
-      var currentLocationObject = null;
-      var currentLoctionIdElement = document.getElementById('billing_okhi_id');
-      if (currentLoctionIdElement && currentLoctionIdElement.value) {
-        currentLocationObject = {
-          id: currentLoctionIdElement.value // The OkHi location id you want manipulated in the selected mode
-        }
-      }
-      var launchConfiguration = {
-        mode: 'select_location',
-        location: currentLocationObject
-      };
-      locationManager.launch(launchConfiguration);
-    };
-    deliveryLocationButton.addEventListener('click', handleButtonClick);
-  </script>
+    wp_enqueue_script('okhi-repeat-user');
+  else:
+/**
+ * new user flow
+ * render button
+ */
+?>
+    <button class="button alt" id="lets-okhi">
+      Delivery location
+    </button>
 <?php
+    wp_enqueue_script('okhi-new-user');
+  endif;
 }
-}
-
 /**
  * change checkout page titles
  */
@@ -419,45 +291,12 @@ function okhi_disable_shipping_calc_on_cart($show_shipping)
 }
 add_filter('woocommerce_cart_ready_to_calc_shipping', 'okhi_disable_shipping_calc_on_cart', 99);
 
-// send the checkout to okhi
+/**
+ * send the checkout to okhi
+ */
 function post_without_wait($url, $data, $api_key)
 {
     // TODO
 }
-add_action('woocommerce_order_status_processing', 'okhi_send_order_details');
-function okhi_send_order_details($order_id)
-{
-    $my_settings = get_option('woocommerce_okhi-integration_settings');
-    $env = isset($my_settings['okhi_is_production_ready']) && $my_settings['okhi_is_production_ready'] !== 'no' ? 'prod' : 'dev';
-    $api_key = $env === 'prod' ? $my_settings['okhi_api_key'] : $my_settings['okhi_dev_api_key'];
-    $curl = curl_init();
-    $order = wc_get_order($order_id);
-    $order_meta = get_post_meta($order_id);
-    $data = array(
-        "user" => array(
-            "firstName" => WC()->customer->get_first_name(),
-            "lastName" => WC()->customer->get_last_name(),
-            "phone" => WC()->customer->get_billing_phone(),
-        ),
-        "id" => (string) $order->get_id(),
-        "location" => isset($order_meta['billing_okhi_location_data']) ? json_decode($order_meta['billing_okhi_location_data'][0]) : '',
-        "locationId" => isset($order_meta['_billing_okhi_id']) ? $order_meta['_billing_okhi_id'][0] : '',
-        "paymentMethod" => $order->payment_method,
-        "value" => floatval($order->get_total()),
-        "type" => "checkout",
-    );
-    $url = $env === "prod" ? "https://server.okhi.co/v1" : "https://server.okhi.dev/v1";
-    $args = array(
-        'body' => json_encode($data),
-        // 'timeout' => '5',
-        // 'redirection' => '5',
-        'httpversion' => '1.0',
-        'blocking' => false,
-        'data_format' => 'body',
-        'headers' => array(
-            'Content-Type' => 'application/json; charset=utf-8',
-            'api-key' => $api_key,
-        ),
-    );
-    $response = wp_remote_post($url . "/interactions", $args);
-}
+include_once 'includes/send-checkout.php';
+
