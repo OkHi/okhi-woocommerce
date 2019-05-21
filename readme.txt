@@ -1,4 +1,3 @@
-V1.0.1
 === OkHi woocommerce ===
 Tags: OkHi, high accuracy addresses, locations, customise woocommerce checkout fields, pluscodes
 Contributors: OkHi
@@ -17,7 +16,15 @@ Last name
 Phone
 and a button to enable the user to launch the OkHi experience select an OkHi location.
 
-This plugin relies on the OkHi locations API to create, store and manage user’s locations. The plugin also sends checkout details to the OkHi API to enable you to get rich insights on your users and by their locations from OkHi. Eg. which regions have a larger basket size than all others.
+This plugin uses OkHi location service for two purposes:
+
+
+ To seamlessly collect accurate location information for the customer. 
+This plugin uses the OkHi Locations API to check whether the user has an existing OkHi location which is then displayed on the address card. If the user doesn’t have an existing location or they would like to use a different one for that transaction, they are asked to create a new one. See documentation for the OkHi Locations API here: https://docs.okhi.co/integrating-okhi/okhi-on-your-website
+
+
+To enable you to view location based used insights e.g. see your location heatmap of your customers based on a specific parameter such order or frequency or product type.
+This plugin uses the OkHi Interactions API to send the interactions data to OkHi post-checkout so you can view it on the OKHi Insights dashboard. See documentation for OkHi Insights API here: https://docs.okhi.co/interactions
 
 Once you install the plugin, you will need an api key from OkHi, visit https://www.okhi.com/business to sign up for one.
 
@@ -27,9 +34,11 @@ Privacy policy: http://www.okhi.com/security
 
 Should you need help, reach us at @letsokhi on twitter.
 
-== Automatic Installation ==
+== Installation ==
 
-Search for the plugin ‘okhi woocommerce’ within wordpress plugins store, from your website’s dashboard
-Install and activate the plugin
-Go to the integrations tab of woocommerce and find the OkHi tab to configure the plugin with an API key provided to you.
-
+1. Download the plugin file to your computer and unzip it
+2. Using an FTP program, or your hosting control panel, upload the unzipped plugin folder to your WordPress installation’s wp-content/plugins/ directory.
+3. Activate the plugin from the Plugins menu within the WordPress admin.
+4. Don't forget to configure your API key and switch to production once done testing
+
+Or use the automatic installation wizard through your admin panel, just search for “OkHi woocommerce”
