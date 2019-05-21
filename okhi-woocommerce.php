@@ -204,14 +204,16 @@ add_action('woocommerce_after_checkout_billing_form', 'add_okhi_form', 10);
  */
 function initialise_okhi_js()
 {
-    wp_enqueue_script('okhi-lib');
-    wp_enqueue_script('okhi-common-functions');
-    wp_add_inline_script('okhi-lib', 'try{var okhi = new OkHi({ apiKey: \''.OKHI_API_KEY.'\' });}catch(e){console.error(e)}finally{console.log(\'okhi is hot\')}');
-    $customerStyles = array('base' => array(
-        'color' => OKHI_HEADER_BACKGROUND_COLOR,
-        'logo' => OKHI_CUSTOMER_LOGO
-      ));
-    wp_add_inline_script('okhi-lib','var okhi_widget_styles ='.json_encode($customerStyles));
+    if(is_checkout()) {
+        wp_enqueue_script('okhi-lib');
+        wp_enqueue_script('okhi-common-functions');
+        wp_add_inline_script('okhi-lib', 'try{var okhi = new OkHi({ apiKey: \''.OKHI_API_KEY.'\' });}catch(e){console.error(e)}');
+        $customerStyles = array('base' => array(
+            'color' => OKHI_HEADER_BACKGROUND_COLOR,
+            'logo' => OKHI_CUSTOMER_LOGO
+        ));
+        wp_add_inline_script('okhi-lib','var okhi_widget_styles ='.json_encode($customerStyles));
+    }
 }
 add_action('wp_enqueue_scripts', 'initialise_okhi_js');
 
