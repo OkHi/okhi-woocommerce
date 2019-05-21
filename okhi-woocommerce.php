@@ -1,17 +1,17 @@
 <?php
 
 /**
- * @package OkHi_WooCommerce_Plugin
- * @version 1.0.0
+ * @package OkHi_WooCommerce
+ * @version 1.0.1
  */
 
 /**
- * Plugin Name: OkHi WooCommerce Plugin
+ * Plugin Name: OkHi WooCommerce
  * Plugin URI: https://www.okhi.com/business
  * Description: OkHi Integration to enable WooCommerce checkout with OkHi.
  * Author:  OkHi
  * Author URI: https://okhi.com/
- * Version: 1.0.0
+ * Version: 1.0.1
  */
 /**
  * Check if WooCommerce is active
@@ -204,14 +204,16 @@ add_action('woocommerce_after_checkout_billing_form', 'add_okhi_form', 10);
  */
 function initialise_okhi_js()
 {
-    wp_enqueue_script('okhi-lib');
-    wp_enqueue_script('okhi-common-functions');
-    wp_add_inline_script('okhi-lib', 'try{var okhi = new OkHi({ apiKey: \''.OKHI_API_KEY.'\' });}catch(e){console.error(e)}');
-    $customerStyles = array('base' => array(
-        'color' => OKHI_HEADER_BACKGROUND_COLOR,
-        'logo' => OKHI_CUSTOMER_LOGO
-      ));
-    wp_add_inline_script('okhi-lib','var okhi_widget_styles ='.json_encode($customerStyles));
+    if(is_checkout()) {
+        wp_enqueue_script('okhi-lib');
+        wp_enqueue_script('okhi-common-functions');
+        wp_add_inline_script('okhi-lib', 'try{var okhi = new OkHi({ apiKey: \''.OKHI_API_KEY.'\' });}catch(e){console.error(e)}');
+        $customerStyles = array('base' => array(
+            'color' => OKHI_HEADER_BACKGROUND_COLOR,
+            'logo' => OKHI_CUSTOMER_LOGO
+        ));
+        wp_add_inline_script('okhi-lib','var okhi_widget_styles ='.json_encode($customerStyles));
+    }
 }
 add_action('wp_enqueue_scripts', 'initialise_okhi_js');
 
