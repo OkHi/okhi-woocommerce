@@ -68,14 +68,11 @@ if (!class_exists('WC_OkHi_integration_plugin')):
     }
 endif;
 define('OKHI_PLUGIN_PATH', plugin_dir_path(__FILE__));
-define('OKHI_SETTINGS', get_option('woocommerce_okhi-integration_settings'));
-define('OKHI_ENV', isset(OKHI_SETTINGS['okhi_is_production_ready']) && OKHI_SETTINGS['okhi_is_production_ready'] !== 'no' ? 'prod' : 'dev');
-define('OKHI_API_KEY', OKHI_ENV === 'prod' ? OKHI_SETTINGS['okhi_api_key'] : OKHI_SETTINGS['okhi_dev_api_key']);
-define('OKHI_HEADER_BACKGROUND_COLOR', OKHI_SETTINGS['okhi_header_background_color']);
-define('OKHI_CUSTOMER_LOGO', OKHI_SETTINGS['okhi_logo']);
-// $my_settings = get_option('woocommerce_okhi-integration_settings');
-// $env = isset($my_settings['okhi_is_production_ready']) && $my_settings['okhi_is_production_ready'] !== 'no' ? 'prod' : 'dev';
-// $api_key = $env === 'prod' ? $my_settings['okhi_api_key'] : $my_settings['okhi_dev_api_key'];
+$OKHI_SETTINGS = get_option('woocommerce_okhi-integration_settings');
+define('OKHI_ENV', isset($OKHI_SETTINGS['okhi_is_production_ready']) && $OKHI_SETTINGS['okhi_is_production_ready'] !== 'no' ? 'prod' : 'dev');
+define('OKHI_API_KEY', OKHI_ENV === 'prod' ? $OKHI_SETTINGS['okhi_api_key'] : $OKHI_SETTINGS['okhi_dev_api_key']);
+define('OKHI_HEADER_BACKGROUND_COLOR', $OKHI_SETTINGS['okhi_header_background_color']);
+define('OKHI_CUSTOMER_LOGO', $OKHI_SETTINGS['okhi_logo']);
 
 // register styles
 wp_register_style('okhi-style', plugins_url( '/assets/css/styles.css', __FILE__ ));
