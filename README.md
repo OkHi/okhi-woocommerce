@@ -4,6 +4,7 @@
 3. [Node & NPM](https://nodejs.org/en/)
 
 # Usage
+* Create two folders `wordpress` and `db`
 * Run `yarn run dev` it should download all necessary containers, create a network between them and expose necessary ports. First time running this command will take a while to finish since mariadb will be doing some inital configuration.
 * To have it run in the background run `yarn run start`
 * To stop it run `yarn run stop`
