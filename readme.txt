@@ -2,9 +2,9 @@
 Tags: OkHi, high accuracy addresses, locations, customise woocommerce checkout fields, pluscodes
 Contributors: OkHi
 Requires at least: 4.0
-Stable tag: 1.0.1
+Stable tag: 1.0.2
 Requires PHP: 5.2.4
-Tested up to: 5.1
+Tested up to: 7.2
 
 This plugin enables your users to checkout with OkHi locations
 
