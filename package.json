@@ -1,8 +1,13 @@
 {
-  "name": "okhi-woocommerce",
-  "version": "1.0.0",
-  "main": "index.js",
-  "repository": "https://github.com/OkHi/okhi-woocommerce.git",
-  "author": "julezKiano <jgkiano@gmail.com>",
-  "license": "MIT"
+	"name": "okhi-woocommerce",
+	"version": "1.0.0",
+	"main": "index.js",
+	"repository": "https://github.com/OkHi/okhi-woocommerce.git",
+	"author": "julezKiano <jgkiano@gmail.com>",
+	"license": "MIT",
+	"scripts": {
+		"dev": "docker-compose up --build",
+		"start": "docker-compose up --build -d",
+		"stop": "docker-compose down"
+	}
 }
