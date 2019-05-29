@@ -3,7 +3,7 @@
 	"version": "1.0.0",
 	"main": "index.js",
 	"repository": "https://github.com/OkHi/okhi-woocommerce.git",
-	"author": "julezKiano <jgkiano@gmail.com>",
+	"author": "okhi <teamokhi@okhi.com>",
 	"license": "MIT",
 	"scripts": {
 		"dev": "docker-compose up --build",
