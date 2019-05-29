@@ -6,9 +6,6 @@
 add_action('woocommerce_order_status_processing', 'okhi_send_order_details');
 function okhi_send_order_details($order_id)
 {
-    // $my_settings = get_option('woocommerce_okhi-integration_settings');
-    // $env = isset($my_settings['okhi_is_production_ready']) && $my_settings['okhi_is_production_ready'] !== 'no' ? 'prod' : 'dev';
-    // $api_key = $env === 'prod' ? $my_settings['okhi_api_key'] : $my_settings['okhi_dev_api_key'];
     $curl = curl_init();
     $order = wc_get_order($order_id);
     $order_meta = get_post_meta($order_id);
@@ -26,7 +23,7 @@ function okhi_send_order_details($order_id)
         "value" => floatval($order->get_total()),
         "type" => "e-commerce",
     );
-    $url = $env === "prod" ? "https://server.okhi.co/v1" : "https://server.okhi.dev/v1";
+    $url = OKHI_ENV === "prod" ? "https://server.okhi.co/v1" : "https://server.okhi.dev/v1";
     $args = array(
         'body' => json_encode($data),
         // 'timeout' => '5',
@@ -40,10 +37,4 @@ function okhi_send_order_details($order_id)
         ),
     );
     $response = wp_remote_post($url . "/interactions", $args);
-    // echo $response;
-    update_post_meta($order_id, 'xoxo', sanitize_text_field($response));
-    update_post_meta($order_id, 'coco', json_encode($data));
-
-
-    echo "xoxoxoxoxo";
 }
