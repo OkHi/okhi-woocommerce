@@ -1,0 +1,46 @@
+version: '3.6'
+
+services:
+
+  wordpress:
+    image: wordpress:php7.1
+    container_name: wordpress
+    volumes:
+      - ./wordpress:/var/www/html
+      - ./config/php.ini:/usr/local/etc/php/php.ini
+      - ./src:/var/www/html/wp-content/plugins/okhi-woocommerce
+    environment:
+      - WORDPRESS_DB_NAME=wordpress
+      - WORDPRESS_DB_USER=wordpress
+      - WORDPRESS_DB_PASSWORD=password
+      - WORDPRESS_TABLE_PREFIX=wp_
+      - WORDPRESS_DB_HOST=mysql
+    links:
+      - mysql
+    ports:
+      - '5050:80'
+    restart: always
+
+  mysql:
+    image: mariadb
+    container_name: mysql
+    volumes:
+      - ./db:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_USER=wordpress
+      - MYSQL_PASSWORD=password
+      - MYSQL_DATABASE=wordpress
+    restart: always
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+      - PMA_HOST=mysql
+    links:
+      - mysql
+    restart: always
+    ports:
+      - '3535:80'
