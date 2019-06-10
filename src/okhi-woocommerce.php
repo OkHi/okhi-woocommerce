@@ -174,9 +174,7 @@ add_action('woocommerce_admin_order_data_after_billing_address', 'okhi_checkout_
 
 function okhi_checkout_field_display_admin_order_meta($order)
 {
-    echo '<p><strong>' . __('OkHi ID') . ':</strong> <br/>' . get_post_meta($order->get_id(), 'billing_okhi_id', true) . '</p>';
     echo '<p><strong>' . __('OkHi URL') . ':</strong> <br/><a href="' . get_post_meta($order->get_id(), 'billing_okhi_url', true) . '" target="_blank">' . get_post_meta($order->get_id(), 'billing_okhi_url', true) . '</a></p>';
-    echo '<p><strong>' . __('OkHi Data') . ':</strong> <br/>' . get_post_meta($order->get_id(), 'billing_okhi_location_data', true) . '</p>';
 }
 
 /**
