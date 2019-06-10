@@ -23,8 +23,18 @@ var handleOnSuccess = function (data, isCallBackCard) {
   if (deliveryNotes && data.location.otherInformation) {
     deliveryNotes.value = data.location.otherInformation;
   }
-  if (billingAddress1 && data.location.streetName) {
-    billingAddress1.value = data.location.streetName;
+  var addressTextData = [];
+  if(data.location.propertyName) {
+    addressTextData.push(data.location.propertyName);
+  }
+  if(data.location.directions) {
+    addressTextData.push(data.location.directions);
+  }
+  if(data.location.streetName) {
+    addressTextData.push(data.location.streetName);
+  }
+  if (billingAddress1) {
+    billingAddress1.value = addressTextData.join(', ').trim();
   }
   if (locationOkHiId && data.location.id) {
     locationOkHiId.value = data.location.id;
