@@ -289,6 +289,19 @@ function okhi_disable_shipping_calc_on_cart($show_shipping)
 add_filter('woocommerce_cart_ready_to_calc_shipping', 'okhi_disable_shipping_calc_on_cart', 99);
 
 /**
+ * remove postcode and country from formatted billing address
+ */
+add_filter('woocommerce_order_formatted_billing_address', 'okhi_woo_custom_order_formatted_billing_address');
+
+function okhi_woo_custom_order_formatted_billing_address($address)
+{
+    unset($address['postcode']);
+    unset($address['country']);
+    return $address;
+
+}
+
+/**
  * send the checkout to okhi
  */
 function post_without_wait($url, $data, $api_key)
