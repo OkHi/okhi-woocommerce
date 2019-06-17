@@ -17,33 +17,33 @@ var handleOnSuccess = function (data, isCallBackCard) {
   var okhiURL = document.getElementById('billing_okhi_url');
   var postcode = document.getElementById('billing_postcode');
 
-  if (locationRawData && data.location) {
+  if (locationRawData) {
     locationRawData.value = JSON.stringify(data.location);
   }
-  if (deliveryNotes && data.location.otherInformation) {
-    deliveryNotes.value = data.location.otherInformation;
+  if (deliveryNotes) {
+    deliveryNotes.value = data.location.otherInformation || '';
   }
   var addressTextData = [];
-  if(data.location.propertyName) {
+  if (data.location.propertyName) {
     addressTextData.push(data.location.propertyName);
   }
-  if(data.location.directions) {
+  if (data.location.directions) {
     addressTextData.push(data.location.directions);
   }
-  if(data.location.streetName) {
+  if (data.location.streetName) {
     addressTextData.push(data.location.streetName);
   }
   if (billingAddress1) {
     billingAddress1.value = addressTextData.join(', ').trim();
   }
-  if (locationOkHiId && data.location.id) {
-    locationOkHiId.value = data.location.id;
+  if (locationOkHiId) {
+    locationOkHiId.value = data.location.id || '';
   }
-  if (okhiURL && data.location.url) {
-    okhiURL.value = data.location.url;
+  if (okhiURL) {
+    okhiURL.value = data.location.url || '';
   }
-  if (postcode && data.location.url) {
-    postcode.value = data.location.plusCode;
+  if (postcode) {
+    postcode.value = data.location.plusCode || '';
   }
 
   // trigger calculation of shipping costs
