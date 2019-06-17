@@ -3,7 +3,7 @@
  * for insights
  * post the location interaction to OkHi
  */
-add_action('woocommerce_order_status_processing', 'okhi_send_order_details');
+add_action('woocommerce_thankyou', 'okhi_send_order_details');
 function okhi_send_order_details($order_id)
 {
     $curl = curl_init();
