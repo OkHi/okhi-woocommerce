@@ -2,11 +2,11 @@
 Tags: OkHi, high accuracy addresses, locations, customise woocommerce checkout fields, pluscodes
 Contributors: OkHi
 Requires at least: 4.0
-Stable tag: 1.0.2
+Stable tag: 1.0.4
 Requires PHP: 5.2.4
-Tested up to: 7.2
+Tested up to: 5.2
 
-This plugin enables your users to checkout with OkHi locations
+Increase conversion, lower costs and grow faster with OkHi
 
 == Description ==
 
@@ -19,20 +19,20 @@ and a button to enable the user to launch the OkHi experience select an OkHi loc
 This plugin uses OkHi location service for two purposes:
 
 
- To seamlessly collect accurate location information for the customer. 
-This plugin uses the OkHi Locations API to check whether the user has an existing OkHi location which is then displayed on the address card. If the user doesn’t have an existing location or they would like to use a different one for that transaction, they are asked to create a new one. See documentation for the OkHi Locations API here: https://docs.okhi.co/integrating-okhi/okhi-on-your-website
+1. To seamlessly collect accurate location information for the customer. 
+This plugin uses the OkHi Locations API to check whether the user has an existing OkHi location which is then displayed on the address card. If the user doesn’t have an existing location or they would like to use a different one for that transaction, they are asked to create a new one. See [documentation for the OkHi Locations API](https://docs.okhi.co/integrating-okhi/okhi-on-your-website?utm_source=okhi-woocommerce-plugin%20readme).
 
 
-To enable you to view location based used insights e.g. see your location heatmap of your customers based on a specific parameter such order or frequency or product type.
-This plugin uses the OkHi Interactions API to send the interactions data to OkHi post-checkout so you can view it on the OKHi Insights dashboard. See documentation for OkHi Insights API here: https://docs.okhi.co/interactions
+2. To enable you to view location based used insights e.g. see your location heatmap of your customers based on a specific parameter such order or frequency or product type.
+This plugin uses the OkHi Interactions API to send the interactions data to OkHi post-checkout so you can view it on the OKHi Insights dashboard. See [documentation for OkHi Insights API](https://docs.okhi.co/interactions?utm_source=okhi-woocommerce-plugin%20readme)
 
-Once you install the plugin, you will need an api key from OkHi, visit https://www.okhi.com/business to sign up for one.
+Once you install the plugin, you will need an api key from OkHi, visit [our business page](https://www.okhi.com/business?utm_source=okhi-woocommerce-plugin%20readme) to sign up for one.
 
-Visit http://www.okhi.com/ for more details about OkHi.
+Visit [okhi.com](https://www.okhi.com/?utm_source=okhi-woocommerce-plugin%20readme) for more details about OkHi.
 
-Privacy policy: http://www.okhi.com/security
+View our privacy policy [here](https://www.okhi.com/security?utm_source=okhi-woocommerce-plugin%20readme)
 
-Should you need help, reach us at @letsokhi on twitter.
+Should you need help, reach us at [@letsokhi](https://twitter.com/letsokhi) on twitter.
 
 == Installation ==
 
@@ -42,3 +42,11 @@ Should you need help, reach us at @letsokhi on twitter.
 4. Don't forget to configure your API key and switch to production once done testing
 
 Or use the automatic installation wizard through your admin panel, just search for “OkHi woocommerce”
+
+== Changelog ==
+
+= 1.0.3 =
+* Removed OkHi data and OkHi ID from the top of edit order details page
+* Removed country and zip code from all formatted billing addresses to reduce confusion
+* Submit checkout data once user hits the thank you page
+* Documentation love to links with markdown syntax

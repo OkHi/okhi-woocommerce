@@ -2,7 +2,7 @@
 
 /**
  * @package OkHi_WooCommerce
- * @version 1.0.2
+ * @version 1.0.4
  */
 
 /**
@@ -11,7 +11,7 @@
  * Description: OkHi Integration to enable WooCommerce checkout with OkHi.
  * Author:  OkHi
  * Author URI: https://okhi.com/
- * Version: 1.0.2
+ * Version: 1.0.4
  */
 /**
  * Check if WooCommerce is active
@@ -174,9 +174,7 @@ add_action('woocommerce_admin_order_data_after_billing_address', 'okhi_checkout_
 
 function okhi_checkout_field_display_admin_order_meta($order)
 {
-    echo '<p><strong>' . __('OkHi ID') . ':</strong> <br/>' . get_post_meta($order->get_id(), 'billing_okhi_id', true) . '</p>';
     echo '<p><strong>' . __('OkHi URL') . ':</strong> <br/><a href="' . get_post_meta($order->get_id(), 'billing_okhi_url', true) . '" target="_blank">' . get_post_meta($order->get_id(), 'billing_okhi_url', true) . '</a></p>';
-    echo '<p><strong>' . __('OkHi Data') . ':</strong> <br/>' . get_post_meta($order->get_id(), 'billing_okhi_location_data', true) . '</p>';
 }
 
 /**
@@ -289,6 +287,19 @@ function okhi_disable_shipping_calc_on_cart($show_shipping)
     return $show_shipping;
 }
 add_filter('woocommerce_cart_ready_to_calc_shipping', 'okhi_disable_shipping_calc_on_cart', 99);
+
+/**
+ * remove postcode and country from formatted billing address
+ */
+add_filter('woocommerce_order_formatted_billing_address', 'okhi_woo_custom_order_formatted_billing_address');
+
+function okhi_woo_custom_order_formatted_billing_address($address)
+{
+    unset($address['postcode']);
+    unset($address['country']);
+    return $address;
+
+}
 
 /**
  * send the checkout to okhi
