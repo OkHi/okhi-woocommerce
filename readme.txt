@@ -2,7 +2,7 @@
 Tags: OkHi, high accuracy addresses, locations, customise woocommerce checkout fields, pluscodes
 Contributors: OkHi
 Requires at least: 4.0
-Stable tag: 1.0.3
+Stable tag: 1.0.4
 Requires PHP: 5.2.4
 Tested up to: 5.2
 
