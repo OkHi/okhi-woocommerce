@@ -50,3 +50,6 @@ Or use the automatic installation wizard through your admin panel, just search f
 * Removed country and zip code from all formatted billing addresses to reduce confusion
 * Submit checkout data once user hits the thank you page
 * Documentation love to links with markdown syntax
+
+= 1.0.4 =
+* Bugfix: Reset a field value if the OkHi API returns an empty value for it
