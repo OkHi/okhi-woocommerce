@@ -2,7 +2,7 @@
 
 /**
  * @package OkHi_WooCommerce
- * @version 1.0.4
+ * @version 1.0.6
  */
 
 /**
@@ -11,7 +11,7 @@
  * Description: OkHi Integration to enable WooCommerce checkout with OkHi.
  * Author:  OkHi
  * Author URI: https://okhi.com/
- * Version: 1.0.4
+ * Version: 1.0.6
  */
 /**
  * Check if WooCommerce is active
@@ -77,9 +77,7 @@ define('OKHI_CUSTOMER_LOGO', $OKHI_SETTINGS['okhi_logo']);
 // register styles
 wp_register_style('okhi-style', plugins_url( '/assets/css/styles.css', __FILE__ ));
 wp_register_script('okhi-lib', 'https://cdn.okhi.io/'.OKHI_ENV.'/web/v4/okhi.min.js');
-wp_register_script('okhi-common-functions', plugins_url('/assets/js/common-functions.js', __FILE__));
-wp_register_script('okhi-new-user', plugins_url( '/assets/js/okhi-new-user.js', __FILE__ ));
-wp_register_script('okhi-repeat-user', plugins_url( '/assets/js/okhi-repeat-user.js', __FILE__ ));
+wp_register_script('okhi-actions', plugins_url('/assets/js/okhi-actions.js', __FILE__));
 // Remove all fields but names and phone
 add_filter('woocommerce_checkout_fields', 'okhi_override_checkout_fields');
 
@@ -201,7 +199,6 @@ function initialise_okhi_js()
 {
     if(is_checkout()) {
         wp_enqueue_script('okhi-lib');
-        wp_enqueue_script('okhi-common-functions');
         wp_add_inline_script('okhi-lib', 'try{var okhi = new OkHi({ apiKey: \''.OKHI_API_KEY.'\' });}catch(e){console.error(e)}');
         $customerStyles = array('base' => array(
             'color' => OKHI_HEADER_BACKGROUND_COLOR,
@@ -224,39 +221,20 @@ function add_okhi_form()
 
 ?>
   <div id="okhi-errors"></div>
-  <script type="text/javascript">
-    
-    
-  </script>
+<!-- OkHi location card -->
   <div
     id="selected-location-card"
-    style="height:200px"
-    data-firstname="<?=WC()->customer->get_first_name()?>"
-    data-lastname="<?=WC()->customer->get_last_name()?>"
-    data-phone="<?=WC()->customer->get_billing_phone()?>"
+    style="height:200px; display: none;"
   ></div>
-  
-<?php
-/**
- * returning user flow
- * render card
- */
-  if (WC()->customer->get_billing_phone()):
-?>
-<?php
-    wp_enqueue_script('okhi-repeat-user');
-  else:
-/**
- * new user flow
- * render button
- */
-?>
-    <button class="button alt" id="lets-okhi">
+
+<!-- button to launch OkHi -->
+  <button class="button alt" id="lets-okhi" style="display:none;">
       Delivery location
-    </button>
+  </button>
 <?php
-    wp_enqueue_script('okhi-new-user');
-  endif;
+
+wp_enqueue_script('okhi-actions');
+
 }
 /**
  * change checkout page titles
