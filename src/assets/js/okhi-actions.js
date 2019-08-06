@@ -182,13 +182,18 @@ var okhiHandleOnError = function (error) {
  */
 
 var okhiHandlePhoneChange = function () {
-  okhiDeliveryLocationButton.style.display = 'none';
   // if (okhiLocationCardContainerElement.innerHTML === '') {
   //   // no location card so do nothing
   //   return;
   // }
   if (okhiUser.phone === okhiBillingPhoneField.value) {
     return
+  }
+  if (okhiBillingPhoneField.value) {
+    okhiDeliveryLocationButton.style.display = 'none';
+  } else{
+    okhiLocationCardContainerElement.style.display = 'none';
+    okhiDeliveryLocationButton.style.display = 'block';
   }
   
   okhiUser = {
@@ -227,7 +232,7 @@ var okhiHandleDeliveryLocationButtonClick = function (e) {
   var lastName = document.getElementById('billing_last_name');
   var phone = document.getElementById('billing_phone');
   if (!phone || !phone.value) {
-    return okhiHandleOnError(new Error('Missing phone number'));
+    return okhiHandleOnError(new Error('Enter a phone number to continue'));
   }
 
   var user = {
