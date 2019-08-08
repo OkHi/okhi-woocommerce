@@ -5,6 +5,7 @@ var okhiBillingPhoneField = document.getElementById('billing_phone');
 var okhiBillingLastName = document.getElementById('billing_last_name');
 var okhiBillingFirstName = document.getElementById('billing_first_name');
 
+var okhiLocationCard;
 
 var okhiCopy = {
   updateOtherInformation: 'Change your delivery notes',
@@ -79,13 +80,15 @@ var okhiRenderLocationCard = function (
   onError = okhiHandleOnError,
   currentLocationObject
   ) {
+    
   // empty the container element
-  containerElement.innerHTML = '';
+  // containerElement.innerHTML = '';
+
   if(!user.phone) {
     return okhiHandleOnError(new Error('Enter a phone number to continue'));
   }
   containerElement.style.display = 'block';
-  new okhi.LocationCard({
+  return new okhi.LocationCard({
     element: containerElement,
     user: user,
     onSuccess: onSuccess,
@@ -145,16 +148,17 @@ var okhiHandleOnSuccess = function (data, isCallBackCard) {
   // trigger calculation of shipping costs
   jQuery(document.body).trigger('update_checkout');
 
-  if (!isCallBackCard) {
-    okhiRenderLocationCard(
-      data.user,
-      okhiLocationCardContainerElement,
-      function (data) {
-        okhiHandleOnSuccess(data, true)
-      },
-      okhiHandleOnError,
-      data.location,
-    );
+  if (!okhiLocationCard) {
+    
+    // okhiRenderLocationCard(
+    //   data.user,
+    //   okhiLocationCardContainerElement,
+    //   function (data) {
+    //     okhiHandleOnSuccess(data, true)
+    //   },
+    //   okhiHandleOnError,
+    //   data.location,
+    // );
   }
 };
 
@@ -205,7 +209,13 @@ var okhiHandlePhoneChange = function () {
   okhiHandleOnError(null);
   okhiResetFields();
   // update current location card
-  okhiRenderLocationCard(
+  if (okhiLocationCard) {
+    
+    okhiLocationCard.user = okhiUser;
+    return;
+  }
+  
+  okhiLocationCard = okhiRenderLocationCard(
     okhiUser,
     okhiLocationCardContainerElement,
     function (data) {
@@ -283,7 +293,7 @@ okhiAddEvent(okhiDeliveryLocationButton, 'click', okhiHandleDeliveryLocationButt
  * for a zero click user experience
  */
 if (okhiUser.phone) {
-  okhiRenderLocationCard(
+  okhiLocationCard = okhiRenderLocationCard(
     okhiUser,
     okhiLocationCardContainerElement,
     function (data) {
