@@ -73,6 +73,8 @@ define('OKHI_ENV', isset($OKHI_SETTINGS['okhi_is_production_ready']) && $OKHI_SE
 define('OKHI_API_KEY', OKHI_ENV === 'prod' ? $OKHI_SETTINGS['okhi_api_key'] : $OKHI_SETTINGS['okhi_dev_api_key']);
 define('OKHI_HEADER_BACKGROUND_COLOR', $OKHI_SETTINGS['okhi_header_background_color']);
 define('OKHI_CUSTOMER_LOGO', $OKHI_SETTINGS['okhi_logo']);
+define('OKHI_SEND_TO_QUEUE', isset($OKHI_SETTINGS['okhi_send_to_queue']) && $OKHI_SETTINGS['okhi_send_to_queue'] !== 'no');
+
 
 // register styles
 wp_register_style('okhi-style', plugins_url( '/assets/css/styles.css', __FILE__ ));
@@ -282,9 +284,8 @@ function okhi_woo_custom_order_formatted_billing_address($address)
 /**
  * send the checkout to okhi
  */
-function post_without_wait($url, $data, $api_key)
-{
-    // TODO
-}
+// function post_without_wait($url, $data, $api_key)
+// {
+//     // TODO
+// }
 include_once 'includes/send-checkout.php';
-
