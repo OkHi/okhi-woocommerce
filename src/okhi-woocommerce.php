@@ -2,7 +2,7 @@
 
 /**
  * @package OkHi_WooCommerce
- * @version 1.0.6
+ * @version 1.0.7
  */
 
 /**
@@ -11,7 +11,7 @@
  * Description: OkHi Integration to enable WooCommerce checkout with OkHi.
  * Author:  OkHi
  * Author URI: https://okhi.com/
- * Version: 1.0.6
+ * Version: 1.0.7
  */
 /**
  * Check if WooCommerce is active
