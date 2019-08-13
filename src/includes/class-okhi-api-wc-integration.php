@@ -57,6 +57,12 @@ if (!class_exists('WC_OkHi_Integration')):
                     'default' => '',
                     'css' => 'width:270px;',
                 ),
+                'okhi_send_to_queue' => array(
+                    'title' => __('Send to OkQueue'),
+                    'type' => 'checkbox',
+                    'description' => __('Check this box only if you are using OkQueue App'),
+                    'desc_tip' => true,
+                ),
                 'okhi_logo' => array(
                     'title' => __('Path to your logo'),
                     'type' => 'text',
@@ -77,3 +83,4 @@ if (!class_exists('WC_OkHi_Integration')):
         }
     }
 endif;
+?>
