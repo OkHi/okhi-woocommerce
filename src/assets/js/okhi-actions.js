@@ -4,7 +4,12 @@ var okhiDeliveryLocationButton = document.getElementById('lets-okhi');
 var okhiBillingPhoneField = document.getElementById('billing_phone');
 var okhiBillingLastName = document.getElementById('billing_last_name');
 var okhiBillingFirstName = document.getElementById('billing_first_name');
-
+var okhiBillingOkHiLocationData = document.getElementById('billing_okhi_location_data');
+var okhiBillingOkHiId = document.getElementById('billing_okhi_id');
+var okhiBillingOkHiURL = document.getElementById('billing_okhi_url');
+var okhiBillingPostcode = document.getElementById('billing_postcode');
+var okhiBillingOtherInformation = document.getElementById('order_comments');
+var errorElement = document.getElementById('okhi-errors');
 var okhiLocationCard;
 
 var okhiCopy = {
@@ -16,10 +21,11 @@ var okhiCopy = {
 };
 
 // create OkHi User object
+// create OkHi User object
 var okhiUser = {
-  firstName: okhiBillingFirstName.value,
-  lastName: okhiBillingLastName.value,
-  phone: okhiBillingPhoneField.value,
+  firstName: okhiBillingFirstName ? okhiBillingFirstName.value : '',
+  lastName: okhiBillingLastName ? okhiBillingLastName.value : '',
+  phone: okhiBillingPhoneField ? okhiBillingPhoneField.value : '',
 };
 
 /***
@@ -31,12 +37,12 @@ var okhiUser = {
   */
 var okhiResetFields = function () {
   var fields = [
-    document.getElementById('billing_okhi_location_data'),
-    document.getElementById('order_comments'),
-    document.getElementById('billing_address_1'),
-    document.getElementById('billing_okhi_id'),
-    document.getElementById('billing_okhi_url'),
-    document.getElementById('billing_postcode')
+    okhiRequiredAddressField,
+    okhiBillingOkHiLocationData,
+    okhiBillingOkHiId,
+    okhiBillingOkHiURL,
+    okhiBillingPostcode,
+    okhiBillingOtherInformation,
   ];
   for (var index = 0; index < fields.length; index++) {
     var element = fields[index];
@@ -79,12 +85,12 @@ var okhiRenderLocationCard = function (
   onSuccess = okhiHandleOnSuccess,
   onError = okhiHandleOnError,
   currentLocationObject
-  ) {
-    
+) {
+
   // empty the container element
   // containerElement.innerHTML = '';
 
-  if(!user.phone) {
+  if (!user.phone) {
     return okhiHandleOnError(new Error('Enter a phone number to continue'));
   }
   containerElement.style.display = 'block';
@@ -95,7 +101,8 @@ var okhiRenderLocationCard = function (
     onError: onError,
     style: okhi_widget_styles,
     location: currentLocationObject,
-    copy: okhiCopy
+    copy: okhiCopy,
+    config: okhi_config,
   });
 }
 
@@ -104,24 +111,16 @@ var okhiRenderLocationCard = function (
  * @param {Object} data 
  * @param {function} isCallBackCard 
  */
-var okhiHandleOnSuccess = function (data, isCallBackCard) {
+var okhiHandleOnSuccess = function (data) {
   // handle your success here with the data you get back
   if (!data || !data.location) {
     return
   }
-  var locationRawData = document.getElementById('billing_okhi_location_data');
-  var deliveryNotes = document.getElementById('order_comments');
-  var okhiRequiredAddressField = document.getElementById('billing_address_1');
-  var locationOkHiId = document.getElementById('billing_okhi_id');
-  var okhiURL = document.getElementById('billing_okhi_url');
-  var postcode = document.getElementById('billing_postcode');
 
-  if (locationRawData) {
+  if (typeof locationRawData !== 'undefined') {
     locationRawData.value = JSON.stringify(data.location);
   }
-  if (deliveryNotes) {
-    deliveryNotes.value = data.location.otherInformation || '';
-  }
+
   var addressTextData = [];
   if (data.location.propertyName) {
     addressTextData.push(data.location.propertyName);
@@ -132,34 +131,40 @@ var okhiHandleOnSuccess = function (data, isCallBackCard) {
   if (data.location.streetName) {
     addressTextData.push(data.location.streetName);
   }
-  if (okhiRequiredAddressField) {
+  if (typeof okhiRequiredAddressField !== 'undefined') {
     okhiRequiredAddressField.value = addressTextData.join(', ').trim();
   }
-  if (locationOkHiId) {
-    locationOkHiId.value = data.location.id || '';
+  if (typeof okhiBillingOtherInformation !== 'undefined') {
+    okhiBillingOtherInformation.value = data.location.otherInformation || '';
   }
-  if (okhiURL) {
-    okhiURL.value = data.location.url || '';
+  if (typeof okhiBillingPostcode !== 'undefined') {
+    okhiBillingPostcode.value = data.location.plusCode || '';
   }
-  if (postcode) {
-    postcode.value = data.location.plusCode || '';
+  if (typeof okhiBillingOkHiLocationData !== 'undefined') {
+    okhiBillingOkHiLocationData.value = JSON.stringify(data.location);
+  }
+  if (typeof okhiBillingOkHiId !== 'undefined') {
+    okhiBillingOkHiId.value = data.location.id || '';
+  }
+  if (typeof okhiBillingOkHiURL !== 'undefined') {
+    okhiBillingOkHiURL.value = data.location.url || '';
   }
 
   // trigger calculation of shipping costs
   jQuery(document.body).trigger('update_checkout');
 
   if (!okhiLocationCard) {
-    
-    // okhiRenderLocationCard(
-    //   data.user,
-    //   okhiLocationCardContainerElement,
-    //   function (data) {
-    //     okhiHandleOnSuccess(data, true)
-    //   },
-    //   okhiHandleOnError,
-    //   data.location,
-    // );
+    okhiLocationCard = okhiRenderLocationCard(
+      data.user,
+      okhiLocationCardContainerElement,
+      okhiHandleOnSuccess,
+      okhiHandleOnError,
+      data.location,
+    );
+    return;
   }
+  okhiDeliveryLocationButton.style.display = 'none';
+  okhiLocationCardContainerElement.style.display = 'block';
 };
 
 /**
@@ -167,12 +172,11 @@ var okhiHandleOnSuccess = function (data, isCallBackCard) {
  * @param {Object} error 
  */
 var okhiHandleOnError = function (error) {
-  var errorElement = document.getElementById('okhi-errors');
   if (!errorElement) {
     return;
   }
   if (!error) {
-    errorElement.innerHTML = "";
+    errorElement.innerHTML = '';
     return;
   }
   // handle errors here e.g fallback to your own way of collecting a location information
@@ -186,35 +190,37 @@ var okhiHandleOnError = function (error) {
  */
 
 var okhiHandlePhoneChange = function () {
-  // if (okhiLocationCardContainerElement.innerHTML === '') {
-  //   // no location card so do nothing
-  //   return;
-  // }
+  if (!okhiLocationCard) {
+    // no location card so do nothing
+    return;
+  }
+
   if (okhiUser.phone === okhiBillingPhoneField.value) {
     return
   }
   if (okhiBillingPhoneField.value) {
     okhiDeliveryLocationButton.style.display = 'none';
-  } else{
+    okhiLocationCardContainerElement.style.display = 'block';
+  } else {
     okhiLocationCardContainerElement.style.display = 'none';
     okhiDeliveryLocationButton.style.display = 'block';
   }
-  
+
   okhiUser = {
     firstName: okhiBillingFirstName.value,
     lastName: okhiBillingLastName.value,
     phone: okhiBillingPhoneField.value
   }
-  
+
   okhiHandleOnError(null);
   okhiResetFields();
   // update current location card
   if (okhiLocationCard) {
-    
+
     okhiLocationCard.user = okhiUser;
     return;
   }
-  
+
   okhiLocationCard = okhiRenderLocationCard(
     okhiUser,
     okhiLocationCardContainerElement,
@@ -260,7 +266,9 @@ var okhiHandleDeliveryLocationButtonClick = function (e) {
       okhiLocationCardContainerElement.style.display = 'block';
     },
     onError: okhiHandleOnError,
-    style: okhi_widget_styles
+    style: okhi_widget_styles,
+    copy: okhiCopy,
+    config: okhi_config,
   });
   var currentLocationObject = null;
   var currentLoctionIdElement = document.getElementById('billing_okhi_id');

@@ -66,7 +66,7 @@ if (!class_exists('WC_OkHi_Integration')):
                 'okhi_logo' => array(
                     'title' => __('Path to your logo'),
                     'type' => 'text',
-                    'description' => __('eg. https: //cdn.okhi.co/okhi-logo-white.svg'),
+                    'description' => __('eg. https://cdn.okhi.co/okhi-logo-white.svg'),
                     'desc_tip' => true,
                     'default' => 'https://cdn.okhi.co/okhi-logo-white.svg',
                     'css' => 'width:270px;',
@@ -74,10 +74,24 @@ if (!class_exists('WC_OkHi_Integration')):
                 'okhi_header_background_color' => array(
                     'title' => __('Header background color'),
                     'type' => 'text',
-                    'description' => __(' eg. rgb(0, 131, 143)'),
+                    'description' => __(' eg. #00838F'),
                     'desc_tip' => true,
-                    'default' => 'rgb(0, 131, 143)',
+                    'default' => '#00838F',
                     'css' => 'width:270px;',
+                ),
+                'okhi_primary_color' => array(
+                    'title' => __('Primary color'),
+                    'type' => 'text',
+                    'description' => __(' eg. #00838F'),
+                    'desc_tip' => true,
+                    'default' => '#00838F',
+                    'css' => 'width:270px;',
+                ),
+                'okhi_show_streetview' => array(
+                    'title' => __('Show streetview'),
+                    'type' => 'checkbox',
+                    'description' => __('Allow users to use streetview to select their gate'),
+                    'desc_tip' => true,
                 ),
             );
         }
