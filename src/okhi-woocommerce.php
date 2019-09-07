@@ -69,7 +69,9 @@ if (!class_exists('WC_OkHi_integration_plugin')):
 endif;
 define('OKHI_PLUGIN_PATH', plugin_dir_path(__FILE__));
 $OKHI_SETTINGS = get_option('woocommerce_okhi-integration_settings');
-define('OKHI_ENV', isset($OKHI_SETTINGS['okhi_is_production_ready']) && $OKHI_SETTINGS['okhi_is_production_ready'] !== 'no' ? 'prod' : 'dev');
+define('OKHI_ENV', isset($OKHI_SETTINGS['okhi_is_production_ready']) && $OKHI_SETTINGS['okhi_is_production_ready'] !== 'no' ? 'prod' : 'sandbox');
+define('OKHI_SHOW_STREETVIEW', isset($OKHI_SETTINGS['okhi_show_streetview']) && $OKHI_SETTINGS['okhi_show_streetview'] !== 'no' ? true : false);
+define('OKHI_PRIMARY_COLOR', $OKHI_SETTINGS['okhi_primary_color']);
 define('OKHI_API_KEY', OKHI_ENV === 'prod' ? $OKHI_SETTINGS['okhi_api_key'] : $OKHI_SETTINGS['okhi_dev_api_key']);
 define('OKHI_HEADER_BACKGROUND_COLOR', $OKHI_SETTINGS['okhi_header_background_color']);
 define('OKHI_CUSTOMER_LOGO', $OKHI_SETTINGS['okhi_logo']);
@@ -203,10 +205,18 @@ function initialise_okhi_js()
         wp_enqueue_script('okhi-lib');
         wp_add_inline_script('okhi-lib', 'try{var okhi = new OkHi({ apiKey: \''.OKHI_API_KEY.'\' });}catch(e){console.error(e)}');
         $customerStyles = array('base' => array(
-            'color' => OKHI_HEADER_BACKGROUND_COLOR,
+            'color' => OKHI_PRIMARY_COLOR,
             'logo' => OKHI_CUSTOMER_LOGO
         ));
         wp_add_inline_script('okhi-lib','var okhi_widget_styles ='.json_encode($customerStyles));
+
+        $customerConfig = array(
+            'appBar' => array(
+                'color' => OKHI_HEADER_BACKGROUND_COLOR,
+            ),
+            'streetView' => OKHI_SHOW_STREETVIEW,
+        );
+        wp_add_inline_script('okhi-lib','var okhi_config ='.json_encode($customerConfig));
     }
 }
 add_action('wp_enqueue_scripts', 'initialise_okhi_js');
