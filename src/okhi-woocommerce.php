@@ -2,7 +2,7 @@
 
 /**
  * @package OkHi_WooCommerce
- * @version 1.1.0
+ * @version 1.2.0
  */
 
 /**
@@ -11,7 +11,7 @@
  * Description: OkHi Integration to enable WooCommerce checkout with OkHi.
  * Author:  OkHi
  * Author URI: https://okhi.com/
- * Version: 1.1.0
+ * Version: 1.2.0
  */
 /**
  * Check if WooCommerce is active
@@ -72,7 +72,10 @@ $OKHI_SETTINGS = get_option('woocommerce_okhi-integration_settings');
 define('OKHI_ENV', isset($OKHI_SETTINGS['okhi_is_production_ready']) && $OKHI_SETTINGS['okhi_is_production_ready'] !== 'no' ? 'prod' : 'sandbox');
 define('OKHI_SHOW_STREETVIEW', isset($OKHI_SETTINGS['okhi_show_streetview']) && $OKHI_SETTINGS['okhi_show_streetview'] !== 'no' ? true : false);
 define('OKHI_PRIMARY_COLOR', $OKHI_SETTINGS['okhi_primary_color']);
-define('OKHI_API_KEY', OKHI_ENV === 'prod' ? $OKHI_SETTINGS['okhi_api_key'] : $OKHI_SETTINGS['okhi_dev_api_key']);
+define('OKHI_CLIENT_API_KEY', $OKHI_SETTINGS['okhi_client_api_key']);
+define('OKHI_SERVER_API_KEY', $OKHI_SETTINGS['okhi_server_api_key']);
+define('OKHI_BRANCH_ID', $OKHI_SETTINGS['okhi_branch_id']);
+define('OKHI_MODE', OKHI_ENV === 'prod' ? 'production' : 'development');
 define('OKHI_HEADER_BACKGROUND_COLOR', $OKHI_SETTINGS['okhi_header_background_color']);
 define('OKHI_CUSTOMER_LOGO', $OKHI_SETTINGS['okhi_logo']);
 define('OKHI_SEND_TO_QUEUE', isset($OKHI_SETTINGS['okhi_send_to_queue']) && $OKHI_SETTINGS['okhi_send_to_queue'] !== 'no');
@@ -80,7 +83,7 @@ define('OKHI_SEND_TO_QUEUE', isset($OKHI_SETTINGS['okhi_send_to_queue']) && $OKH
 
 // register styles
 wp_register_style('okhi-style', plugins_url( '/assets/css/styles.css', __FILE__ ));
-wp_register_script('okhi-lib', 'https://cdn.okhi.io/'.OKHI_ENV.'/web/v4/okhi.min.js');
+wp_register_script('okhi-lib', 'https://cdn.okhi.io/lib/web/okhi.v5.dev.js.gz');
 wp_register_script('okhi-actions', plugins_url('/assets/js/okhi-actions.js', __FILE__));
 // Remove all fields but names and phone
 add_filter('woocommerce_checkout_fields', 'okhi_override_checkout_fields');
@@ -203,20 +206,28 @@ function initialise_okhi_js()
 {
     if(is_checkout()) {
         wp_enqueue_script('okhi-lib');
-        wp_add_inline_script('okhi-lib', 'try{var okhi = new OkHi({ apiKey: \''.OKHI_API_KEY.'\' });}catch(e){console.error(e)}');
+        // wp_add_inline_script('okhi-lib', 'try{var okhi = new OkHi({ apiKey: \''.OKHI_API_KEY.'\' });}catch(e){console.error(e)}');
         $customerStyles = array('base' => array(
             'color' => OKHI_PRIMARY_COLOR,
             'logo' => OKHI_CUSTOMER_LOGO
         ));
-        wp_add_inline_script('okhi-lib','var okhi_widget_styles ='.json_encode($customerStyles));
-
         $customerConfig = array(
             'appBar' => array(
                 'color' => OKHI_HEADER_BACKGROUND_COLOR,
             ),
             'streetView' => OKHI_SHOW_STREETVIEW,
         );
-        wp_add_inline_script('okhi-lib','var okhi_config ='.json_encode($customerConfig));
+        $customerAuth = array(
+            'clientKey' => OKHI_CLIENT_API_KEY,
+            'branchId' => OKHI_BRANCH_ID,
+            'mode' => OKHI_MODE
+        );
+        
+        wp_add_inline_script('okhi-lib','var okhi_auth = new okhi.OkHiAuth(' .json_encode($customerAuth). ');');
+
+        wp_add_inline_script('okhi-lib','var okhi_widget_styles = new okhi.OkHiStyle(' .json_encode($customerStyles,JSON_UNESCAPED_SLASHES). ');');
+
+        wp_add_inline_script('okhi-lib','var okhi_config = new okhi.OkHiConfig(' .json_encode($customerConfig). ');');
     }
 }
 add_action('wp_enqueue_scripts', 'initialise_okhi_js');
@@ -224,9 +235,9 @@ add_action('wp_enqueue_scripts', 'initialise_okhi_js');
 function add_okhi_form()
 {
   
-    $my_settings = get_option('woocommerce_okhi-integration_settings');
-    $env = isset($my_settings['okhi_is_production_ready']) && $my_settings['okhi_is_production_ready'] !== 'no' ? 'prod' : 'dev';
-    $api_key = $env === 'prod' ? $my_settings['okhi_api_key'] : $my_settings['okhi_dev_api_key'];
+    // $my_settings = get_option('woocommerce_okhi-integration_settings');
+    // $env = isset($my_settings['okhi_is_production_ready']) && $my_settings['okhi_is_production_ready'] !== 'no' ? 'prod' : 'dev';
+    // $api_key = OKHI_CLIENT_API_KEY;
     wp_enqueue_style('okhi-style');
     // wp_enqueue_script('okhi-lib');
     

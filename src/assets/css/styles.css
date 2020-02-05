@@ -7,6 +7,6 @@ button#lets-okhi {
   width: 100%;
 }
 
-#billing_country_field, #billing_address_1_field, #billing_postcode_field, #billing_okhi_location_data_field, #billing_okhi_id_field, #billing_okhi_url_field, .woocommerce-additional-fields {
+/* #billing_country_field, #billing_address_1_field, #billing_postcode_field, #billing_okhi_location_data_field, #billing_okhi_id_field, #billing_okhi_url_field, .woocommerce-additional-fields {
   display: none!important;
-}
+} */

@@ -46,7 +46,7 @@ function okhi_send_order_details($order_id)
         'data_format' => 'body',
         'headers' => array(
             'Content-Type' => 'application/json; charset=utf-8',
-            'api-key' => OKHI_API_KEY,
+            'api-key' => OKHI_SERVER_API_KEY,
         ),
     );
     $response = wp_remote_post($url . "/interactions", $args);

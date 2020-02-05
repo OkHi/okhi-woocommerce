@@ -22,9 +22,8 @@ if (!class_exists('WC_OkHi_Integration')):
             $this->init_form_fields();
             $this->init_settings();
             // Define user set variables.
-            $this->okhi_is_production_ready = $this->get_option('okhi_is_production_ready');
-            $this->okhi_api_key = $this->get_option('okhi_api_key');
-            $this->okhi_dev_api_key = $this->get_option('okhi_dev_api_key');
+            $this->okhi_client_api_key = $this->get_option('okhi_client_api_key');
+            $this->okhi_server_api_key = $this->get_option('okhi_server_api_key');
 
             // Actions.
             add_action('woocommerce_update_options_integration_' . $this->id, array($this, 'process_admin_options'));
@@ -35,24 +34,26 @@ if (!class_exists('WC_OkHi_Integration')):
         public function init_form_fields()
     {
             $this->form_fields = array(
-                'okhi_is_production_ready' => array(
-                    'title' => __('Production Mode'),
-                    'type' => 'checkbox',
-                    'description' => __('Done testing?'),
-                    'desc_tip' => true,
-                ),
-                'okhi_dev_api_key' => array(
-                    'title' => __('Developement API Key'),
+                'okhi_client_api_key' => array(
+                    'title' => __('Client API key'),
                     'type' => 'text',
-                    'description' => __('Enter your development API Key'),
+                    'description' => __('Enter client API key'),
                     'desc_tip' => true,
                     'default' => '',
                     'css' => 'width:270px;',
                 ),
-                'okhi_api_key' => array(
-                    'title' => __('Production API Key'),
+                'okhi_server_api_key' => array(
+                    'title' => __('Server API Key'),
                     'type' => 'text',
-                    'description' => __('Enter API Key'),
+                    'description' => __('Enter your server API Key'),
+                    'desc_tip' => true,
+                    'default' => '',
+                    'css' => 'width:270px;',
+                ),
+                'okhi_branch_id' => array(
+                    'title' => __('Branch ID'),
+                    'type' => 'text',
+                    'description' => __('ID for the given branch'),
                     'desc_tip' => true,
                     'default' => '',
                     'css' => 'width:270px;',
