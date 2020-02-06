@@ -4,6 +4,12 @@
  * post the location interaction to OkHi
  */
 add_action('woocommerce_thankyou', 'okhi_send_order_details');
+
+// function post_without_wait($url, $data, $api_key)
+// {
+// TODO implement async post
+// }
+
 function okhi_send_order_details($order_id)
 {
     $curl = curl_init();
