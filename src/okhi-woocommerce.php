@@ -2,7 +2,7 @@
 
 /**
  * @package OkHi_WooCommerce
- * @version 1.2.0
+ * @version 1.3.0
  */
 
 /**
@@ -11,302 +11,206 @@
  * Description: OkHi Integration to enable WooCommerce checkout with OkHi.
  * Author:  OkHi
  * Author URI: https://okhi.com/
- * Version: 1.2.0
+ * Version: 1.3.0
  */
 /**
  * Check if WooCommerce is active
  **/
 if (!defined('ABSPATH')) {
-    exit; // Exit if accessed directly
+    exit(); // Exit if accessed directly
 }
 
-if (!in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_option('active_plugins')))) {
+if (
+    !in_array(
+        'woocommerce/woocommerce.php',
+        apply_filters('active_plugins', get_option('active_plugins'))
+    )
+) {
     return; // Stop right there if woocommerce is inactive
 }
 
 if (!class_exists('WC_OkHi_integration_plugin')):
     class WC_OkHi_integration_plugin
-{
+    {
         /**
          * Construct the plugin.
          */
         public function __construct()
-    {
+        {
             add_action('plugins_loaded', array($this, 'init'));
         }
         /**
          * Initialize the plugin.
          */
         public function init()
-    {
+        {
             // Checks if WooCommerce is installed.
             if (class_exists('WC_Integration')) {
                 // Include our integration class.
                 include_once 'includes/class-okhi-api-wc-integration.php';
                 // Register the integration.
-                add_filter('woocommerce_integrations', array($this, 'add_integration'));
+                add_filter('woocommerce_integrations', array(
+                    $this,
+                    'add_integration'
+                ));
                 // Set the plugin slug
                 define('OkHi_integration_slug', 'wc-settings');
                 // Setting action for plugin
-                add_filter('plugin_action_links_' . plugin_basename(__FILE__), 'WC_OkHi_integration_plugin_action_links');
+                add_filter(
+                    'plugin_action_links_' . plugin_basename(__FILE__),
+                    'WC_OkHi_integration_plugin_action_links'
+                );
             }
         }
         /**
          * Add a new integration to WooCommerce.
          */
         public function add_integration($integrations)
-    {
+        {
             $integrations[] = 'WC_OkHi_Integration';
             return $integrations;
         }
     }
     $WC_OkHi_integration_plugin = new WC_OkHi_integration_plugin(__FILE__);
     function WC_OkHi_integration_plugin_action_links($links)
-{
-        $links[] = '<a href="' . menu_page_url(OkHi_integration_slug, false) . '&tab=integration&section=okhi-integration">Settings</a>';
+    {
+        $links[] =
+            '<a href="' .
+            menu_page_url(OkHi_integration_slug, false) .
+            '&tab=integration&section=okhi-integration">Settings</a>';
         return $links;
     }
-endif;
-define('OKHI_PLUGIN_PATH', plugin_dir_path(__FILE__));
-$OKHI_SETTINGS = get_option('woocommerce_okhi-integration_settings');
-define('OKHI_ENV', isset($OKHI_SETTINGS['okhi_is_production_ready']) && $OKHI_SETTINGS['okhi_is_production_ready'] !== 'no' ? 'prod' : 'sandbox');
-define('OKHI_SHOW_STREETVIEW', isset($OKHI_SETTINGS['okhi_show_streetview']) && $OKHI_SETTINGS['okhi_show_streetview'] !== 'no' ? true : false);
-define('OKHI_PRIMARY_COLOR', $OKHI_SETTINGS['okhi_primary_color']);
-define('OKHI_CLIENT_API_KEY', $OKHI_SETTINGS['okhi_client_api_key']);
-define('OKHI_SERVER_API_KEY', $OKHI_SETTINGS['okhi_server_api_key']);
-define('OKHI_BRANCH_ID', $OKHI_SETTINGS['okhi_branch_id']);
-define('OKHI_MODE', OKHI_ENV === 'prod' ? 'production' : 'development');
-define('OKHI_HEADER_BACKGROUND_COLOR', $OKHI_SETTINGS['okhi_header_background_color']);
-define('OKHI_CUSTOMER_LOGO', $OKHI_SETTINGS['okhi_logo']);
-define('OKHI_SEND_TO_QUEUE', isset($OKHI_SETTINGS['okhi_send_to_queue']) && $OKHI_SETTINGS['okhi_send_to_queue'] !== 'no');
-
-
-// register styles
-wp_register_style('okhi-style', plugins_url( '/assets/css/styles.css', __FILE__ ));
-wp_register_script('okhi-lib', 'https://cdn.okhi.io/lib/web/okhi.v5.dev.js.gz');
-wp_register_script('okhi-actions', plugins_url('/assets/js/okhi-actions.js', __FILE__));
-// Remove all fields but names and phone
-add_filter('woocommerce_checkout_fields', 'okhi_override_checkout_fields');
-
-/**
- * Remove: billing_company, billing_address_2, billing_city, billing_email, billing_state
- * Add: billing_okhi_location_data, billing_okhi_id, billing_okhi_url
- * change: wc error to state a value is required and not a field
- * Make optional: billing_postcode
- */
-function okhi_override_checkout_fields($fields)
-{
-    $fields['billing']['billing_first_name'] = array(
-        'label' => __('First name', 'woocommerce'),
-        'required' => true,
-        'class' => array('form-row-wide'),
-        'clear' => true,
+    define('OKHI_PLUGIN_PATH', plugin_dir_path(__FILE__));
+    $OKHI_SETTINGS = get_option('woocommerce_okhi-integration_settings');
+    define(
+        'OKHI_ENV',
+        isset($OKHI_SETTINGS['okhi_is_production_ready']) &&
+        $OKHI_SETTINGS['okhi_is_production_ready'] !== 'no'
+            ? 'prod'
+            : 'sandbox'
     );
-    $fields['billing']['billing_last_name'] = array(
-        'label' => __('Last name', 'woocommerce'),
-        'required' => false,
-        'class' => array('form-row-wide'),
-        'clear' => true,
+    define(
+        'OKHI_SHOW_STREETVIEW',
+        isset($OKHI_SETTINGS['okhi_show_streetview']) &&
+        $OKHI_SETTINGS['okhi_show_streetview'] !== 'no'
+            ? true
+            : false
+    );
+    define('OKHI_PRIMARY_COLOR', $OKHI_SETTINGS['okhi_primary_color']);
+    define('OKHI_CLIENT_API_KEY', $OKHI_SETTINGS['okhi_client_api_key']);
+    define('OKHI_SERVER_API_KEY', $OKHI_SETTINGS['okhi_server_api_key']);
+    define('OKHI_BRANCH_ID', $OKHI_SETTINGS['okhi_branch_id']);
+    define('OKHI_MODE', OKHI_ENV === 'prod' ? 'production' : 'development');
+    define(
+        'OKHI_HEADER_BACKGROUND_COLOR',
+        $OKHI_SETTINGS['okhi_header_background_color']
+    );
+    define('OKHI_CUSTOMER_LOGO', $OKHI_SETTINGS['okhi_logo']);
+    define(
+        'OKHI_SEND_TO_QUEUE',
+        isset($OKHI_SETTINGS['okhi_send_to_queue']) &&
+            $OKHI_SETTINGS['okhi_send_to_queue'] !== 'no'
     );
 
-    $fields['billing']['billing_okhi_location_data'] = array(
-        'label' => __('Your OkHi', 'woocommerce'),
-        'required' => true,
-        'class' => array('form-row-wide'),
-        'clear' => true,
-    );
-    $fields['billing']['billing_address_1'] = array(
-        'label' => __('Delivery location', 'woocommerce'),
-        'required' => true,
-        'class' => array('form-row-wide'),
-        'clear' => true,
-    );
-    $fields['billing']['billing_okhi_id'] = array(
-        'label' => __('OkHiId', 'woocommerce'),
-        'required' => false,
-        'class' => array('form-row-wide'),
-        'clear' => true,
-    );
-    $fields['billing']['billing_okhi_url'] = array(
-        'label' => __('OkHi URL', 'woocommerce'),
-        'required' => false,
-        'class' => array('form-row-wide'),
-        'clear' => true,
-    );
-    $fields['billing']['billing_okhi_location_data'] = array(
-        'label' => __('Your OkHi', 'woocommerce'),
-        'required' => false,
-        'class' => array('form-row-wide'),
-        'clear' => true,
-    );
-    $fields['billing']['billing_postcode'] = array(
-        'label' => __('Plus code', 'woocommerce'),
-        'required' => false,
-        'class' => array('form-row-wide'),
-        'clear' => true,
-    );
-    // remove irrelevant fields
-    unset($fields['billing']['billing_company']);
-    unset($fields['billing']['billing_address_2']);
-    unset($fields['billing']['billing_city']);
-    // unset($fields['billing']['billing_email']);
-    unset($fields['billing']['billing_state']);
-    return $fields;
-}
-
-/**
- * Update the order meta with field value
- */
-add_action('woocommerce_checkout_update_order_meta', 'okhi_checkout_field_update_order_meta');
-
-function okhi_checkout_field_update_order_meta($order_id)
-{
-    if (!empty($_POST['billing_okhi_id'])) {
-        update_post_meta($order_id, 'billing_okhi_id', sanitize_text_field($_POST['billing_okhi_id']));
-    }
-    if (!empty($_POST['billing_okhi_url'])) {
-        update_post_meta($order_id, 'billing_okhi_url', sanitize_text_field($_POST['billing_okhi_url']));
-    }
-    if (!empty($_POST['billing_okhi_location_data'])) {
-        update_post_meta($order_id, 'billing_okhi_location_data', sanitize_text_field($_POST['billing_okhi_location_data']));
-    }
-}
-
-/**
- * Display field value on the order edit page
- */
-add_action('woocommerce_admin_order_data_after_billing_address', 'okhi_checkout_field_display_admin_order_meta', 10, 1);
-
-function okhi_checkout_field_display_admin_order_meta($order)
-{
-    echo '<p><strong>' . __('OkHi URL') . ':</strong> <br/><a href="' . get_post_meta($order->get_id(), 'billing_okhi_url', true) . '" target="_blank">' . get_post_meta($order->get_id(), 'billing_okhi_url', true) . '</a></p>';
-}
-
-/**
- * Remove the word billing from billing field errors
- */
-add_filter('woocommerce_add_error', 'okhi_customize_wc_errors');
-function okhi_customize_wc_errors($error)
-{
-    if (strpos($error, 'Billing ') !== false) {
-        $error = str_replace("Billing ", "", $error);
-    }
-    if (strpos($error, 'is a required field.') !== false) {
-        $error = str_replace("is a required field.", "is required.", $error);
-    }
-    return $error;
-}
-
-add_action('woocommerce_after_checkout_billing_form', 'add_okhi_form', 10);
-
-/**
- * Display okhi form
- */
-function initialise_okhi_js()
-{
-    if(is_checkout()) {
-        wp_enqueue_script('okhi-lib');
-        // wp_add_inline_script('okhi-lib', 'try{var okhi = new OkHi({ apiKey: \''.OKHI_API_KEY.'\' });}catch(e){console.error(e)}');
-        $customerStyles = array('base' => array(
-            'color' => OKHI_PRIMARY_COLOR,
-            'logo' => OKHI_CUSTOMER_LOGO
-        ));
-        $customerConfig = array(
-            'appBar' => array(
-                'color' => OKHI_HEADER_BACKGROUND_COLOR,
-            ),
-            'streetView' => OKHI_SHOW_STREETVIEW,
-        );
-        $customerAuth = array(
-            'clientKey' => OKHI_CLIENT_API_KEY,
-            'branchId' => OKHI_BRANCH_ID,
-            'mode' => OKHI_MODE
-        );
-        
-        wp_add_inline_script('okhi-lib','var okhi_auth = new okhi.OkHiAuth(' .json_encode($customerAuth). ');');
-
-        wp_add_inline_script('okhi-lib','var okhi_widget_styles = new okhi.OkHiStyle(' .json_encode($customerStyles,JSON_UNESCAPED_SLASHES). ');');
-
-        wp_add_inline_script('okhi-lib','var okhi_config = new okhi.OkHiConfig(' .json_encode($customerConfig). ');');
-    }
-}
-add_action('wp_enqueue_scripts', 'initialise_okhi_js');
-
-function add_okhi_form()
-{
-  
-    // $my_settings = get_option('woocommerce_okhi-integration_settings');
-    // $env = isset($my_settings['okhi_is_production_ready']) && $my_settings['okhi_is_production_ready'] !== 'no' ? 'prod' : 'dev';
-    // $api_key = OKHI_CLIENT_API_KEY;
-    wp_enqueue_style('okhi-style');
-    // wp_enqueue_script('okhi-lib');
+    // wp_register_script('okhi-lib', 'https://cdn.okhi.io/lib/web/okhi.v5.dev.js.gz');
+    // wp_register_script('okhi-actions', plugins_url('/assets/js/okhi-actions.js', __FILE__));
     
 
-?>
-  <div id="okhi-errors"></div>
-<!-- OkHi location card -->
-  <div
-    id="selected-location-card"
-    style="height:200px; display: none;"
-  ></div>
+    add_action('woocommerce_after_checkout_billing_form', 'add_okhi_elements_to_checkout', 10);
 
-<!-- button to launch OkHi -->
-  <button class="button alt" id="lets-okhi" style="display:none;">
-      Delivery location
-  </button>
-<?php
+    /**
+     * Display okhi form
+     */
 
-wp_enqueue_script('okhi-actions');
+    function add_okhi_elements_to_checkout()
+    {
+        // $my_settings = get_option('woocommerce_okhi-integration_settings');
+        // $env = isset($my_settings['okhi_is_production_ready']) && $my_settings['okhi_is_production_ready'] !== 'no' ? 'prod' : 'dev';
+        // $api_key = OKHI_CLIENT_API_KEY;
+        // wp_enqueue_script('okhi-lib');
+        ?>
+            <div id="okhi-errors"></div>
+            <!-- OkHi location card -->
+            <div
+                id="selected-location-card"
+                style="height:200px; display: none;"
+            ></div>
 
-}
-/**
- * change checkout page titles
- */
-function okhi_wc_billing_field_strings($translated_text, $text, $domain)
-{
-    switch ($translated_text) {
-        case 'Billing details':
-            $translated_text = __('Account details', 'woocommerce');
-            break;
-        case 'Billing &amp; Shipping':
-            $translated_text = __('Account details', 'woocommerce');
-            break;
+            <!-- button to launch OkHi -->
+            <button class="button alt" id="lets-okhi" style="display:none;">
+                Delivery location
+            </button>
+            
+            <!-- loading placeholder -->
+            <div
+                id="okhi-loader">
+                <!-- Delivery location -->
+            </div>
+        <?php
+            
     }
-    return $translated_text;
-}
-add_filter('gettext', 'okhi_wc_billing_field_strings', 20, 3);
+    
 
-/**
- * remove shipping cost in cart
- */
+    
 
-function okhi_disable_shipping_calc_on_cart($show_shipping)
-{
-    if (is_cart()) {
-        return false;
+    function okhi_load_okhi_js_sdk()
+    {
+        if (is_checkout()) {
+            $customerStyles = array(
+                'color' => OKHI_PRIMARY_COLOR,
+                'logo' => OKHI_CUSTOMER_LOGO
+            );
+            $customerConfig = array(
+                'appBar' => array(
+                    'color' => OKHI_HEADER_BACKGROUND_COLOR
+                ),
+                'streetView' => OKHI_SHOW_STREETVIEW
+            );
+
+            $url =
+                'https://dev-api.okhi.io/okweb/v5?clientKey=' .
+                OKHI_CLIENT_API_KEY .
+                '&branchId=' .
+                OKHI_BRANCH_ID .
+                '&callback=okhi_init#asyncload';
+            // setup styles
+            
+            wp_enqueue_style('okhi-style',
+                plugins_url('/assets/css/styles.css', __FILE__));
+            
+            wp_enqueue_script('okhi-actions',
+                plugins_url('/assets/js/okhi-actions.js', __FILE__));
+
+            wp_add_inline_script('okhi-actions','window.okhi_styles='. json_encode($customerStyles, JSON_UNESCAPED_SLASHES). ';');
+            wp_add_inline_script('okhi-actions','window.okhi_config='. json_encode($customerConfig) .';');
+            wp_enqueue_script('okhi-lib', $url, ['okhi-actions']);
+            // wp_add_inline_script(
+            //     'okhi-lib',
+            //     'var okhi_init = function() {' .
+            //         'window.okhi_widget_styles = new window.okhi.OkHiStyle(' .
+            //             json_encode($customerStyles, JSON_UNESCAPED_SLASHES) .
+            //         ');' .
+            //         'window.okhi_config = new window.okhi.OkHiConfig(' .
+            //             json_encode($customerConfig) .
+            //         ');' .
+            //         'try{'.
+            //             'okhi_attach()'.
+            //         '}catch(e){'.
+            //             'console.log("failing fatal",e);'.
+            //         '}'.
+            //     '};'
+            // );
+        }
     }
-    return $show_shipping;
-}
-add_filter('woocommerce_cart_ready_to_calc_shipping', 'okhi_disable_shipping_calc_on_cart', 99);
 
-/**
- * remove postcode and country from formatted billing address
- */
-add_filter('woocommerce_order_formatted_billing_address', 'okhi_woo_custom_order_formatted_billing_address');
+    add_action('wp_enqueue_scripts', 'okhi_load_okhi_js_sdk');
 
-function okhi_woo_custom_order_formatted_billing_address($address)
-{
-    unset($address['postcode']);
-    unset($address['country']);
-    return $address;
-
-}
-
-/**
- * send the checkout to okhi
- */
-// function post_without_wait($url, $data, $api_key)
-// {
-//     // TODO
-// }
-include_once 'includes/send-checkout.php';
+    /**
+     * cleanup woocommerce defaults for ideal okhi experience
+     */
+    include_once 'includes/setup.php';
+    /**
+     * send the checkout to okhi
+     */
+    include_once 'includes/send-checkout.php';
+endif;
