@@ -42,7 +42,7 @@ function okhi_send_order_details($order_id)
 
         ),
     );
-    $url = OKHI_ENV === "prod" ? "https://server.okhi.co/v1" : "https: //sandbox-server.okhi.dev/v1";
+    $url = OKHI_ENV === "prod" ? "https://server.okhi.co/v1" : "https://server.okhi.dev/v1";
     $args = array(
         'body' => json_encode($data),
         // 'timeout' => '5',
