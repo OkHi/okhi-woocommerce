@@ -200,6 +200,23 @@ var okhi_init = function(stylesJSON, configJSON) {
      * @param {Object} error
      */
     var okhiHandleOnError = function(error) {
+        if (
+            error &&
+            error.message &&
+            error.message.toLowerCase().indexOf('invalid phone number') > -1
+        ) {
+            // how a button to launch OkHi
+            jQuery('#lets-okhi').show();
+            // hide card
+            jQuery('#selected-location-card').hide();
+        }
+        if (
+            error &&
+            error.message &&
+            error.message.toLowerCase().indexOf('exited') > -1
+        ) {
+            // return;
+        }
         if (!errorElement) {
             return;
         }
@@ -213,7 +230,17 @@ var okhi_init = function(stylesJSON, configJSON) {
             : 'Something went wrong please try again';
     };
 
-    var handleFatalError = function() {
+    var handleFatalError = function(error) {
+        if (
+            error &&
+            error.message &&
+            error.message.toLowerCase().indexOf('invalid phone number') > -1
+        ) {
+            // this is not fatal
+            okhiHandleOnError(error);
+
+            return;
+        }
         jQuery.each(
             [
                 '#billing_country_field',
@@ -250,14 +277,14 @@ var okhi_init = function(stylesJSON, configJSON) {
             okhiDeliveryLocationButton.style.display = 'block';
         }
         try {
+            okhiHandleOnError(null);
+            okhiResetFields();
             okhiUser = new window.okhi.OkHiUser({
                 firstName: okhiBillingFirstName,
                 lastName: okhiBillingLastName,
                 phone: okhiBillingPhoneField.value
             });
 
-            okhiHandleOnError(null);
-            okhiResetFields();
             // update current location card
             if (okhiLocationCard) {
                 okhiLocationCard.user = okhiUser;
@@ -273,6 +300,7 @@ var okhi_init = function(stylesJSON, configJSON) {
                 okhiHandleOnError
             );
         } catch (error) {
+            // hid
             okhiHandleOnError(error);
         }
     };
@@ -336,7 +364,8 @@ var okhi_init = function(stylesJSON, configJSON) {
             });
         } catch (error) {
             // something broke, allow user to proceed manually
-            handleFatalError();
+
+            handleFatalError(error);
             console.log('launch manager errors', error);
         }
 
@@ -414,7 +443,7 @@ var okhi_init = function(stylesJSON, configJSON) {
              * otherwise show a button to launch OkHi
              * location manager
              */
-            okhiDeliveryLocationButton.style.display = 'block';
+            jQuery('#lets-okhi').show();
         }
         // hide default fields
         jQuery.each(
@@ -430,7 +459,7 @@ var okhi_init = function(stylesJSON, configJSON) {
             }
         );
     } catch (error) {
-        handleFatalError();
+        handleFatalError(error);
         console.log('Erroring out:', error);
     } finally {
         jQuery.each(

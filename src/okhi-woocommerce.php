@@ -99,6 +99,7 @@ if (!class_exists('WC_OkHi_integration_plugin')):
     define('OKHI_PRIMARY_COLOR', $OKHI_SETTINGS['okhi_primary_color']);
     define('OKHI_CLIENT_API_KEY', $OKHI_SETTINGS['okhi_client_api_key']);
     define('OKHI_SERVER_API_KEY', $OKHI_SETTINGS['okhi_server_api_key']);
+    define('OKHI_JS_LIB_URL', OKHI_ENV === 'prod' ? 'https://api.okhi.io/v5/okweb' : 'https://dev-api.okhi.io/v5/okweb');
     define('OKHI_BRANCH_ID', $OKHI_SETTINGS['okhi_branch_id']);
     define('OKHI_MODE', OKHI_ENV === 'prod' ? 'production' : 'development');
     define(
@@ -155,7 +156,7 @@ if (!class_exists('WC_OkHi_integration_plugin')):
 
     function okhi_load_okhi_js_sdk()
     {
-        if (is_checkout()) {
+        if (is_checkout() && ! ( is_wc_endpoint_url( 'order-pay' ) || is_wc_endpoint_url( 'order-received' ) ) ) {
             $customerStyles = array(
                 'color' => OKHI_PRIMARY_COLOR,
                 'logo' => OKHI_CUSTOMER_LOGO
@@ -168,7 +169,7 @@ if (!class_exists('WC_OkHi_integration_plugin')):
             );
 
             $url =
-                'https://dev-api.okhi.io/okweb/v5?clientKey=' .
+                OKHI_JS_LIB_URL .'?clientKey=' .
                 OKHI_CLIENT_API_KEY .
                 '&branchId=' .
                 OKHI_BRANCH_ID .
@@ -184,6 +185,7 @@ if (!class_exists('WC_OkHi_integration_plugin')):
             wp_add_inline_script('okhi-actions','window.okhi_styles='. json_encode($customerStyles, JSON_UNESCAPED_SLASHES). ';');
             wp_add_inline_script('okhi-actions','window.okhi_config='. json_encode($customerConfig) .';');
             wp_enqueue_script('okhi-lib', $url, ['okhi-actions']);
+            
             // wp_add_inline_script(
             //     'okhi-lib',
             //     'var okhi_init = function() {' .
