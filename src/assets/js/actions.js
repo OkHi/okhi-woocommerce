@@ -1,20 +1,32 @@
-var okhi_init = function(stylesJSON, configJSON) {
-    var okhiLocationCardContainerElement = document.getElementById(
-        'selected-location-card'
-    );
-    var okhiRequiredAddressField = document.getElementById('billing_address_1');
-    var okhiDeliveryLocationButton = document.getElementById('lets-okhi');
+function okhi_init() {
+    // window.okhi.OkHiInit({
+    //     app: {
+    //         name: wcOkHiJson.app.name,
+    //         version: wcOkHiJson.app.version,
+    //         build: wcOkHiJson.app.build
+    //     },
+    //     platform: { name: 'web' },
+    //     developer: { name: 'okhi' }
+    // });
+
     var okhiBillingPhoneField = document.getElementById('billing_phone');
     var okhiBillingLastName = document.getElementById('billing_last_name');
     var okhiBillingFirstName = document.getElementById('billing_first_name');
+    var okhiRequiredAddressField = document.getElementById('billing_address_1');
+    var okhiBillingPostcode = document.getElementById('billing_postcode');
+    var okhiBillingOtherInformation = document.getElementById('order_comments');
+
+    var okhiBillingOkHiId = document.getElementById('billing_okhi_id');
+    var okhiBillingOkHiURL = document.getElementById('billing_okhi_url');
     var okhiBillingOkHiLocationData = document.getElementById(
         'billing_okhi_location_data'
     );
-    var okhiBillingOkHiId = document.getElementById('billing_okhi_id');
-    var okhiBillingOkHiURL = document.getElementById('billing_okhi_url');
-    var okhiBillingPostcode = document.getElementById('billing_postcode');
-    var okhiBillingOtherInformation = document.getElementById('order_comments');
+    var okhiLocationCardContainerElement = document.getElementById(
+        'selected-location-card'
+    );
+
     var errorElement = document.getElementById('okhi-errors');
+
     var okhiLocationCard;
     var okhiUser;
     var okhiCopy = {
@@ -25,32 +37,17 @@ var okhi_init = function(stylesJSON, configJSON) {
         createOtherInformation: 'Delivery notes'
     };
 
-    /**
-     * configure */
-    var okhi_widget_styles = new window.okhi.OkHiStyle(window.okhi_styles);
-    var okhi_config = new window.okhi.OkHiConfig(window.okhi_config);
+    var okhiDeliveryLocationButton = document.getElementById('lets-okhi');
 
-    /***
-     * common functions
-     ***/
+    var okhiStyle = new window.okhi.OkHiStyle({
+        color: wcOkHiJson.styles.color,
+        logo: wcOkHiJson.styles.logo
+    });
 
-    /**
-     * reset fields set by OkHi
-     */
-    var okhiResetFields = function() {
-        var fields = [
-            okhiRequiredAddressField,
-            okhiBillingOkHiLocationData,
-            okhiBillingOkHiId,
-            okhiBillingOkHiURL,
-            okhiBillingPostcode,
-            okhiBillingOtherInformation
-        ];
-        for (var index = 0; index < fields.length; index++) {
-            var element = fields[index];
-            element.value = '';
-        }
-    };
+    var okhiConfig = new window.okhi.OkHiConfig({
+        streetView: wcOkHiJson.config.streetView,
+        appBar: wcOkHiJson.config.appBar
+    });
 
     /**
      * event handler with compat setup
@@ -84,14 +81,14 @@ var okhi_init = function(stylesJSON, configJSON) {
         user,
         containerElement,
         onSuccess, // = okhiHandleOnSuccess
-        onError, // = okhiHandleOnError
+        onError, // = okhiHandleError
         currentLocationObject
     ) {
         // empty the container element
         // containerElement.innerHTML = '';
 
         if (!user.phone) {
-            return okhiHandleOnError(
+            return okhiHandleError(
                 new Error('Enter a phone number to continue')
             );
         }
@@ -102,8 +99,8 @@ var okhi_init = function(stylesJSON, configJSON) {
             {
                 user: user,
                 // auth: okhi_auth,
-                style: okhi_widget_styles,
-                config: okhi_config,
+                style: okhiStyle,
+                config: okhiConfig,
                 copy: okhiCopy,
                 location: currentLocationObject
             },
@@ -121,16 +118,6 @@ var okhi_init = function(stylesJSON, configJSON) {
                 }
             }
         );
-        return new window.okhi.LocationCard({
-            element: containerElement,
-            user: user,
-            onSuccess: onSuccess,
-            onError: onError,
-            style: okhi_widget_styles,
-            location: currentLocationObject,
-            copy: okhiCopy,
-            config: okhi_config
-        });
     };
 
     /**
@@ -186,7 +173,7 @@ var okhi_init = function(stylesJSON, configJSON) {
                 data.user,
                 okhiLocationCardContainerElement,
                 okhiHandleOnSuccess,
-                okhiHandleOnError,
+                okhiHandleError,
                 currentLocationObject
             );
             return;
@@ -199,7 +186,9 @@ var okhi_init = function(stylesJSON, configJSON) {
      * Handle errors from OkHi
      * @param {Object} error
      */
-    var okhiHandleOnError = function(error) {
+    var okhiHandleError = function(error) {
+        console.log(error, '<<<');
+
         if (
             error &&
             error.message &&
@@ -210,12 +199,8 @@ var okhi_init = function(stylesJSON, configJSON) {
             // hide card
             jQuery('#selected-location-card').hide();
         }
-        if (
-            error &&
-            error.message &&
-            error.message.toLowerCase().indexOf('exited') > -1
-        ) {
-            // return;
+        if (error && error.code && error.code == 'exit_app') {
+            return;
         }
         if (!errorElement) {
             return;
@@ -229,7 +214,6 @@ var okhi_init = function(stylesJSON, configJSON) {
             ? error.message
             : 'Something went wrong please try again';
     };
-
     var handleFatalError = function(error) {
         if (
             error &&
@@ -237,7 +221,7 @@ var okhi_init = function(stylesJSON, configJSON) {
             error.message.toLowerCase().indexOf('invalid phone number') > -1
         ) {
             // this is not fatal
-            okhiHandleOnError(error);
+            okhiHandleError(error);
 
             return;
         }
@@ -277,7 +261,7 @@ var okhi_init = function(stylesJSON, configJSON) {
             okhiDeliveryLocationButton.style.display = 'block';
         }
         try {
-            okhiHandleOnError(null);
+            okhiHandleError(null);
             okhiResetFields();
             okhiUser = new window.okhi.OkHiUser({
                 firstName: okhiBillingFirstName,
@@ -297,11 +281,11 @@ var okhi_init = function(stylesJSON, configJSON) {
                 function(data) {
                     okhiHandleOnSuccess(data, true);
                 },
-                okhiHandleOnError
+                okhiHandleError
             );
         } catch (error) {
             // hid
-            okhiHandleOnError(error);
+            okhiHandleError(error);
         }
     };
 
@@ -315,14 +299,14 @@ var okhi_init = function(stylesJSON, configJSON) {
             e.preventDefault();
         }
         // reset errors
-        okhiHandleOnError(null);
+        okhiHandleError(null);
 
         // craete okhi user object
         var firstName = document.getElementById('billing_first_name');
         var lastName = document.getElementById('billing_last_name');
         var phone = document.getElementById('billing_phone');
         if (!phone || !phone.value) {
-            return okhiHandleOnError(
+            return okhiHandleError(
                 new Error('Enter a phone number to continue')
             );
         }
@@ -347,8 +331,8 @@ var okhi_init = function(stylesJSON, configJSON) {
             var locationManager = new window.okhi.OkHiLocationManager({
                 user: user,
                 // auth: okhi_auth,
-                style: okhi_widget_styles,
-                config: okhi_config,
+                style: okhiStyle,
+                config: okhiConfig,
                 mode: window.okhi.OkHiLocationManagerLaunchMode.select_location,
                 copy: okhiCopy,
                 location: currentLocationObject
@@ -356,7 +340,7 @@ var okhi_init = function(stylesJSON, configJSON) {
 
             locationManager.launch(function(error, data) {
                 if (error) {
-                    throw error;
+                    okhiHandleError(error);
                 }
                 okhiHandleOnSuccess(data);
                 okhiDeliveryLocationButton.style.display = 'none';
@@ -364,46 +348,17 @@ var okhi_init = function(stylesJSON, configJSON) {
             });
         } catch (error) {
             // something broke, allow user to proceed manually
-
-            handleFatalError(error);
+            okhiHandleError(error);
             console.log('launch manager errors', error);
         }
-
-        // instanciate manager
-
-        // var locationManager = new window.okhi.LocationManager({
-        //   user: user,
-        //   onSuccess: function (data) {
-        //     okhiHandleOnSuccess(data);
-        //     okhiDeliveryLocationButton.style.display = 'none';
-        //     okhiLocationCardContainerElement.style.display = 'block';
-        //   },
-        //   onError: okhiHandleOnError,
-        //   style: okhi_widget_styles,
-        //   copy: okhiCopy,
-        //   config: okhi_config,
-        // });
-        // var currentLocationObject = null;
-        // var currentLoctionIdElement = document.getElementById('billing_okhi_id');
-        // if (currentLoctionIdElement && currentLoctionIdElement.value) {
-        //   currentLocationObject = {
-        //     id: currentLoctionIdElement.value // The OkHi location id you want manipulated in the selected mode
-        //   }
-        // }
-        // var launchConfiguration = {
-        //   mode: 'select_location',
-        //   location: currentLocationObject
-        // };
-        // locationManager.launch(launchConfiguration);
     };
     /**
-     * listen for changes in the phone field
+     * Add listeners
      */
+    // listen for changes in the phone field
     okhiAddEvent(okhiBillingPhoneField, 'blur', okhiHandlePhoneChange);
 
-    /**
-     * Delivery location button listener
-     */
+    // Delivery location button listener
     okhiAddEvent(
         okhiDeliveryLocationButton,
         'click',
@@ -436,7 +391,7 @@ var okhi_init = function(stylesJSON, configJSON) {
                 function(data) {
                     okhiHandleOnSuccess(data, true);
                 },
-                okhiHandleOnError
+                okhiHandleError
             );
         } else {
             /**
@@ -469,4 +424,4 @@ var okhi_init = function(stylesJSON, configJSON) {
             }
         );
     }
-};
+}

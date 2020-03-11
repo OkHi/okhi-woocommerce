@@ -1,0 +1,10 @@
+{
+    "[javascript]": {
+         "editor.formatOnSave": true
+     },
+     "[php]": {
+         "editor.formatOnSave": true
+    },
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+ }

@@ -16,17 +16,3 @@ button#lets-okhi {
 .woocommerce-additional-fields {
     display: none;
 }
-#okhi-loader {
-    text-align: center;
-    padding: 20px;
-    box-sizing: inherit;
-    display: block;
-    background-color: rgba(0, 0, 0, 0.08);
-    height: auto;
-    transform: scale(1, 0.6);
-    margin-top: 0;
-    border-radius: 4px;
-    margin-bottom: 0;
-    transform-origin: 0 60%;
-    animation: MuiSkeleton-keyframes-pulse 1.5s ease-in-out 0.5s infinite;
-}
