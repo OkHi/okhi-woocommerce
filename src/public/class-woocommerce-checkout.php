@@ -4,7 +4,7 @@ class WC_OkHi_Checkout
 {
     public function __construct()
     {
-        // add_action('wp_enqueue_scripts', array($this, 'enqueue_css'));
+        add_action('wp_enqueue_scripts', array($this, 'enqueue_css'));
         add_action('wp_enqueue_scripts', array($this, 'enqueue_js'));
 
         add_action(
@@ -19,6 +19,10 @@ class WC_OkHi_Checkout
             20,
             1
         );
+        add_filter('woocommerce_default_address_fields', array(
+            $this,
+            'okhi_override_default_address_fields'
+        ));
 
         /**
          * Update the order meta with field value
@@ -74,65 +78,93 @@ class WC_OkHi_Checkout
     }
     public function enqueue_css()
     {
-        wp_register_style(
-            'wc_okhi-styles',
-            wc_okhi()->plugin_url() . '/assets/css/styles.css'
-        );
-        wp_enqueue_style('wc_okhi-styles');
+        if (
+            is_checkout() &&
+            !(
+                is_wc_endpoint_url('order-pay') ||
+                is_wc_endpoint_url('order-received')
+            )
+        ) {
+            wp_register_style(
+                'wc_okhi-styles',
+                wc_okhi()->plugin_url() . '/assets/css/okhi-styles.css'
+            );
+            wp_enqueue_style('wc_okhi-styles');
+        }
     }
     public function enqueue_js()
     {
-        $url =
-            WC_OKHI_JS_LIB_PATH .
-            '?clientKey=' .
-            WC_OKHI_CLIENT_API_KEY .
-            '&branchId=' .
-            WC_OKHI_BRANCH_ID .
-            '&callback=okhi_init#asyncload';
-        $script_dep = array('jquery', 'wc-checkout');
-        wp_register_script(
-            'wc_okhi_js-script',
-            wc_okhi()->plugin_url() . '/assets/js/actions.js',
-            $script_dep,
-            WC_OKHI_PLUGIN_VERSION,
-            true
-        );
-        wp_register_script('wc_okhi-lib', $url, array('wc_okhi_js-script'));
-        $customerStyles = array(
-            'color' => WC_OKHI_PRIMARY_COLOR,
-            'logo' => WC_OKHI_CUSTOMER_LOGO
-        );
-        $customerConfig = array(
-            'appBar' => array(
-                'color' => WC_OKHI_HEADER_BACKGROUND_COLOR
-            ),
-            'streetView' => WC_OKHI_SHOW_STREETVIEW
-        );
-        $app = array(
-            'name' => WC_OKHI_TEXT_DOMAIN,
-            'version' => WC_OKHI_PLUGIN_VERSION,
-            'build' => WC_OKHI_PLUGIN_BUILD
-        );
-        $wcjson = array(
-            'config' => $customerConfig,
-            'styles' => $customerStyles,
-            'app' => $app
-        );
-        wp_localize_script('wc_okhi_js-script', 'wcOkHiJson', $wcjson);
-        wp_enqueue_script('wc_okhi_js-script');
-        wp_enqueue_script('wc_okhi-lib');
+        if (
+            is_checkout() &&
+            !(
+                is_wc_endpoint_url('order-pay') ||
+                is_wc_endpoint_url('order-received')
+            )
+        ) {
+            $url =
+                WC_OKHI_JS_LIB_PATH .
+                '?clientKey=' .
+                WC_OKHI_CLIENT_API_KEY .
+                '&branchId=' .
+                WC_OKHI_BRANCH_ID .
+                '&callback=okhi_init#asyncload';
+            $script_dep = array('jquery', 'wc-checkout');
+            wp_register_script(
+                'wc_okhi_js-script',
+                wc_okhi()->plugin_url() . '/assets/js/okhi-actions.js',
+                $script_dep,
+                WC_OKHI_PLUGIN_VERSION,
+                true
+            );
+            wp_register_script('wc_okhi-lib', $url, array('wc_okhi_js-script'));
+            $customerStyles = array(
+                'color' => WC_OKHI_PRIMARY_COLOR,
+                'logo' => WC_OKHI_CUSTOMER_LOGO
+            );
+            $customerConfig = array(
+                'appBar' => array(
+                    'color' => WC_OKHI_HEADER_BACKGROUND_COLOR
+                ),
+                'streetView' => WC_OKHI_SHOW_STREETVIEW
+            );
+            $app = array(
+                'name' => WC_OKHI_TEXT_DOMAIN,
+                'version' => WC_OKHI_PLUGIN_VERSION,
+                'build' => WC_OKHI_PLUGIN_BUILD
+            );
+            $wcjson = array(
+                'config' => $customerConfig,
+                'styles' => $customerStyles,
+                'app' => $app,
+                'countryCallingCode' => WC_OKHI_COUNTRY_CALLING_CODE
+            );
+            wp_localize_script('wc_okhi_js-script', 'wcOkHiJson', $wcjson);
+            wp_enqueue_script('wc_okhi_js-script');
+            wp_enqueue_script('wc_okhi-lib');
+        }
     }
-
+    public function okhi_override_default_address_fields($address_fields)
+    {
+        $address_fields['last_name']['required'] = false;
+        $address_fields['postcode']['required'] = false;
+        $address_fields['address_1']['required'] = false;
+        unset($address_fields['postcode']['validate']);
+        unset($address_fields['company']);
+        unset($address_fields['address_2']);
+        unset($address_fields['city']);
+        unset($address_fields['email']);
+        unset($address_fields['state']);
+        return $address_fields;
+    }
     public function okhi_override_checkout_fields($fields)
     {
-        $fields['billing']['billing_last_name']['required'] = false;
-        $fields['billing']['billing_postcode']['required'] = false;
+        $fields['billing']['billing_email']['required'] = false;
         // $fields['billing']['billing_address_1']
         // add okhi fields
         $fields['billing']['billing_okhi_location_data'] = array(
-            'label' => __('Your OkHi', 'woocommerce'),
+            'label' => __('Delivery location', 'woocommerce'),
             'required' => true,
-            'class' => array('form-row-wide'),
+            'class' => array('form-row-wide', 'hidden'),
             'clear' => true
         );
         $fields['billing']['billing_okhi_id'] = array(
@@ -144,12 +176,6 @@ class WC_OkHi_Checkout
         $fields['billing']['billing_okhi_url'] = array(
             'label' => __('OkHi URL', 'woocommerce'),
             'required' => false,
-            'class' => array('form-row-wide', 'hidden'),
-            'clear' => true
-        );
-        $fields['billing']['billing_okhi_location_data'] = array(
-            'label' => __('Delivery location', 'woocommerce'),
-            'required' => true,
             'class' => array('form-row-wide', 'hidden'),
             'clear' => true
         );
