@@ -31,6 +31,12 @@ if (!class_exists('WC_OkHi')) {
     include_once dirname(__FILE__) . '/includes/class-wc-okhi.php';
 }
 
+if (!class_exists('WC_OkHi_Send_Checkout')) {
+    include_once dirname(__FILE__) .
+        '/includes/class-wc-okhi-send-checkouts.php';
+    new WC_OkHi_Send_Checkout();
+}
+
 function wc_okhi()
 {
     return WC_OkHi::instance();
@@ -52,6 +58,16 @@ if (!class_exists('WC_Temp')):
             // } else {
             //     var_dump(0000);
             // }
+            if (class_exists('WC_Countries')) {
+                $countries = new WC_Countries();
+                $baseCountry = $countries->get_base_country();
+                define(
+                    'WC_OKHI_COUNTRY_CALLING_CODE',
+                    $baseCountry
+                        ? $countries->get_country_calling_code($baseCountry)
+                        : '+254'
+                );
+            }
 
             // Include our integration class.
             if (!class_exists('WC_OkHi_Integration')) {
@@ -66,7 +82,7 @@ if (!class_exists('WC_Temp')):
             // Set the plugin slug
             define('OkHi_integration_slug', 'wc-settings');
             // Setting action for plugin
-            add_filter('plugin_action_links_', array(
+            add_filter('plugin_action_links', array(
                 $this,
                 'WC_OkHi_integration_plugin_action_links'
             ));
