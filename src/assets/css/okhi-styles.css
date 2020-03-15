@@ -14,5 +14,5 @@ button#lets-okhi {
 #billing_okhi_id_field,
 #billing_okhi_url_field,
 .woocommerce-additional-fields {
-    display: none;
+    display: none !important;
 }
