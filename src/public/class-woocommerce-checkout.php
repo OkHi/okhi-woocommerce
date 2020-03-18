@@ -102,7 +102,8 @@ class WC_OkHi_Checkout
             )
         ) {
             $url =
-                WC_OKHI_JS_LIB_PATH .
+                wc_okhi()->okhi_base_url() .
+                '/okweb' .
                 '?clientKey=' .
                 WC_OKHI_CLIENT_API_KEY .
                 '&branchId=' .
@@ -161,9 +162,39 @@ class WC_OkHi_Checkout
         $fields['billing']['billing_email']['required'] = false;
         // $fields['billing']['billing_address_1']
         // add okhi fields
-        $fields['billing']['billing_okhi_location_data'] = array(
+        $fields['billing']['billing_okhi_street_name'] = array(
             'label' => __('Delivery location', 'woocommerce'),
             'required' => true,
+            'class' => array('form-row-wide', 'hidden'),
+            'clear' => true
+        );
+        $fields['billing']['billing_okhi_property_name'] = array(
+            'label' => __('Building name', 'woocommerce'),
+            'required' => false,
+            'class' => array('form-row-wide', 'hidden'),
+            'clear' => true
+        );
+        $fields['billing']['billing_okhi_property_number'] = array(
+            'label' => __('Property number', 'woocommerce'),
+            'required' => false,
+            'class' => array('form-row-wide', 'hidden'),
+            'clear' => true
+        );
+        $fields['billing']['billing_okhi_lat'] = array(
+            'label' => __('Latitude', 'woocommerce'),
+            'required' => false,
+            'class' => array('form-row-wide', 'hidden'),
+            'clear' => true
+        );
+        $fields['billing']['billing_okhi_lon'] = array(
+            'label' => __('Longitude', 'woocommerce'),
+            'required' => false,
+            'class' => array('form-row-wide', 'hidden'),
+            'clear' => true
+        );
+        $fields['billing']['billing_okhi_place_id'] = array(
+            'label' => __('OkHi Place ID', 'woocommerce'),
+            'required' => false,
             'class' => array('form-row-wide', 'hidden'),
             'clear' => true
         );
@@ -190,6 +221,48 @@ class WC_OkHi_Checkout
 
     public function okhi_checkout_field_update_order_meta($order_id)
     {
+        if (!empty($_POST['billing_okhi_street_name'])) {
+            update_post_meta(
+                $order_id,
+                'billing_okhi_street_name',
+                sanitize_text_field($_POST['billing_okhi_street_name'])
+            );
+        }
+        if (!empty($_POST['billing_okhi_property_name'])) {
+            update_post_meta(
+                $order_id,
+                'billing_okhi_property_name',
+                sanitize_text_field($_POST['billing_okhi_property_name'])
+            );
+        }
+        if (!empty($_POST['billing_okhi_property_number'])) {
+            update_post_meta(
+                $order_id,
+                'billing_okhi_property_number',
+                sanitize_text_field($_POST['billing_okhi_property_number'])
+            );
+        }
+        if (!empty($_POST['billing_okhi_lat'])) {
+            update_post_meta(
+                $order_id,
+                'billing_okhi_lat',
+                sanitize_text_field($_POST['billing_okhi_lat'])
+            );
+        }
+        if (!empty($_POST['billing_okhi_lon'])) {
+            update_post_meta(
+                $order_id,
+                'billing_okhi_lon',
+                sanitize_text_field($_POST['billing_okhi_lon'])
+            );
+        }
+        if (!empty($_POST['billing_okhi_place_id'])) {
+            update_post_meta(
+                $order_id,
+                'billing_okhi_place_id',
+                sanitize_text_field($_POST['billing_okhi_place_id'])
+            );
+        }
         if (!empty($_POST['billing_okhi_id'])) {
             update_post_meta(
                 $order_id,
@@ -202,13 +275,6 @@ class WC_OkHi_Checkout
                 $order_id,
                 'billing_okhi_url',
                 sanitize_text_field($_POST['billing_okhi_url'])
-            );
-        }
-        if (!empty($_POST['billing_okhi_location_data'])) {
-            update_post_meta(
-                $order_id,
-                'billing_okhi_location_data',
-                sanitize_text_field($_POST['billing_okhi_location_data'])
             );
         }
     }

@@ -83,17 +83,6 @@ final class WC_OkHi
             isset($OKHI_SETTINGS['okhi_send_to_queue']) &&
                 $OKHI_SETTINGS['okhi_send_to_queue'] !== 'no'
         );
-        if (WC_OKHI_ENVIRONMENT == 'production') {
-            $this->internalDefine(
-                'WC_OKHI_JS_LIB_PATH',
-                'https://api.okhi.io/v5/okweb'
-            );
-        } else {
-            $this->internalDefine(
-                'WC_OKHI_JS_LIB_PATH',
-                'https://dev-api.okhi.io/v5/okweb'
-            );
-        }
 
         // if (trim(strtolower(WC_OKHI_ENVIRONMENT)) == 'production') {
         //     $this->internalDefine('WC_OKHI_MIN_SUFFIX', '.min');
@@ -127,6 +116,15 @@ final class WC_OkHi
     public function plugin_url()
     {
         return untrailingslashit(plugins_url('/', WC_OKHI_PLUGIN_FILE));
+    }
+
+    public function okhi_base_url()
+    {
+        if (WC_OKHI_ENVIRONMENT == 'production') {
+            return 'https://api.okhi.io/v5';
+        } else {
+            return 'https://dev-api.okhi.io/v5';
+        }
     }
 
     public function admin_notices()
