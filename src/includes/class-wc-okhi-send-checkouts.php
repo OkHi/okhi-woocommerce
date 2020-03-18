@@ -32,11 +32,36 @@ class WC_OkHi_Send_Checkout
                 'phone' => $order->get_billing_phone()
             ),
             'id' => (string) $order->get_id(),
-            'location' => isset($order_meta['billing_okhi_location_data'])
-                ? json_decode($order_meta['billing_okhi_location_data'][0])
-                : '',
-            'location_id' => isset($order_meta['_billing_okhi_id'])
-                ? $order_meta['_billing_okhi_id'][0]
+            'location' => array(
+                'street_name' => isset(
+                    $order_meta['billing_okhi_street_name'][0]
+                )
+                    ? $order_meta['billing_okhi_street_name'][0]
+                    : '',
+                'property_name' => isset(
+                    $order_meta['billing_okhi_property_name'][0]
+                )
+                    ? $order_meta['billing_okhi_property_name'][0]
+                    : '',
+                'property_number' => isset(
+                    $order_meta['billing_okhi_property_number'][0]
+                )
+                    ? $order_meta['billing_okhi_property_number'][0]
+                    : '',
+                'geo_point' => array(
+                    'lat' => isset($order_meta['billing_okhi_lat'][0])
+                        ? floatval($order_meta['billing_okhi_lat'][0])
+                        : 0,
+                    'lon' => isset($order_meta['billing_okhi_lon'][0])
+                        ? floatval($order_meta['billing_okhi_lon'][0])
+                        : 0
+                ),
+                'place_id' => isset($order_meta['billing_okhi_place_id'][0])
+                    ? $order_meta['billing_okhi_place_id'][0]
+                    : ''
+            ),
+            'location_id' => isset($order_meta['billing_okhi_id'])
+                ? $order_meta['billing_okhi_id'][0]
                 : '',
             'value' => floatval($order->get_total()),
             'use_case' => 'e-commerce',
@@ -53,10 +78,7 @@ class WC_OkHi_Send_Checkout
                 )
             )
         );
-        $url =
-            WC_OKHI_ENVIRONMENT === 'production'
-                ? 'https://api.okhi.io/v5'
-                : 'https://dev-api.okhi.io/v5';
+
         $args = array(
             'body' => json_encode($data),
             // 'timeout' => '5',
@@ -73,6 +95,9 @@ class WC_OkHi_Send_Checkout
                     )
             )
         );
-        $response = wp_remote_post($url . '/interactions', $args);
+        $response = wp_remote_post(
+            wc_okhi()->okhi_base_url() . '/interactions',
+            $args
+        );
     }
 }
