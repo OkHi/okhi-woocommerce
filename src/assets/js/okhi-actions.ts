@@ -1,3 +1,59 @@
+declare const jQuery: any;
+declare const okhi: any;
+declare const wcOkHiJson: {
+    app: {
+        name: string;
+        version: string;
+        build: number;
+    };
+    config: {
+        appBar: {
+            color: string;
+        };
+        streetView: boolean;
+    };
+    styles: {
+        color: string;
+        logo: string;
+        name: string;
+        classes: {
+            'lc-container': string;
+            'lc-title': string;
+            'lc-button': string;
+            'lc-top': string;
+            'lc-bottom': string;
+            'block-button': string;
+            'up-container': string;
+            'up-message': string;
+            'lc-information': string;
+        };
+    };
+    countryCallingCode: string;
+};
+interface Copy {
+    createOtherInformation: string;
+    updateOtherInformation: string;
+    createLocation: string;
+    selectLocation: string;
+    upsellMessage: string;
+}
+interface Location {
+    streetName: string;
+    propertyName: string;
+    propertyNumber: string;
+    geoPoint: { lat: string; lon: string };
+    placeId: string;
+    directions: string;
+    id: string;
+    url: string;
+    otherInformation: string;
+    plusCode: string;
+}
+interface User {
+    phone: string;
+    firstName: string;
+    lastName: string;
+}
 function okhi_init() {
     okhi.OkHiInit({
         app: {
@@ -8,61 +64,99 @@ function okhi_init() {
         platform: { name: 'web' },
         developer: { name: 'okhi' }
     });
-    var okhiBillingPhoneField = document.getElementById('billing_phone');
-    var okhiBillingLastNameField = document.getElementById('billing_last_name');
-    var okhiBillingFirstNameField = document.getElementById('billing_first_name');
-    var okhiRequiredAddressField = document.getElementById('billing_address_1');
-    var okhiBillingPostcodeField = document.getElementById('billing_postcode');
-    var okhiBillingOtherInformationField = document.getElementById('order_comments');
-    var okhiBillingStreetNameField = document.getElementById('billing_okhi_street_name');
-    var okhiBillingPropertyNameField = document.getElementById('billing_okhi_property_name');
-    var okhiBillingPropertyNumberField = document.getElementById('billing_okhi_property_number');
-    var okhiBillingOkHiLatField = document.getElementById('billing_okhi_lat');
-    var okhiBillingOkHiLonField = document.getElementById('billing_okhi_lon');
-    var okhiBillingOkHiPlaceIdField = document.getElementById('billing_okhi_place_id');
-    var okhiBillingOkHiIdField = document.getElementById('billing_okhi_id');
-    var okhiBillingOkHiURLField = document.getElementById('billing_okhi_url');
-    var okhiLocationCardContainerElement = document.getElementById('selected-location-card');
-    var errorElement = document.getElementById('okhi-errors');
-    var okhiLocationCard;
-    var okhiUser;
-    var okhiCopy = {
+
+    const okhiBillingPhoneField = document.getElementById(
+        'billing_phone'
+    ) as HTMLInputElement;
+    const okhiBillingLastNameField = document.getElementById(
+        'billing_last_name'
+    ) as HTMLInputElement;
+    const okhiBillingFirstNameField = document.getElementById(
+        'billing_first_name'
+    ) as HTMLInputElement;
+    const okhiRequiredAddressField = document.getElementById(
+        'billing_address_1'
+    ) as HTMLInputElement;
+    const okhiBillingPostcodeField = document.getElementById(
+        'billing_postcode'
+    ) as HTMLInputElement;
+    const okhiBillingOtherInformationField = document.getElementById(
+        'order_comments'
+    ) as HTMLInputElement;
+
+    const okhiBillingStreetNameField = document.getElementById(
+        'billing_okhi_street_name'
+    ) as HTMLInputElement;
+    const okhiBillingPropertyNameField = document.getElementById(
+        'billing_okhi_property_name'
+    ) as HTMLInputElement;
+    const okhiBillingPropertyNumberField = document.getElementById(
+        'billing_okhi_property_number'
+    ) as HTMLInputElement;
+    const okhiBillingOkHiLatField = document.getElementById(
+        'billing_okhi_lat'
+    ) as HTMLInputElement;
+    const okhiBillingOkHiLonField = document.getElementById(
+        'billing_okhi_lon'
+    ) as HTMLInputElement;
+    const okhiBillingOkHiPlaceIdField = document.getElementById(
+        'billing_okhi_place_id'
+    ) as HTMLInputElement;
+    const okhiBillingOkHiIdField = document.getElementById(
+        'billing_okhi_id'
+    ) as HTMLInputElement;
+    const okhiBillingOkHiURLField = document.getElementById(
+        'billing_okhi_url'
+    ) as HTMLInputElement;
+
+    const okhiLocationCardContainerElement = document.getElementById(
+        'selected-location-card'
+    );
+
+    const errorElement = document.getElementById('okhi-errors');
+
+    let okhiLocationCard;
+    let okhiUser;
+    const okhiCopy: Copy = {
         updateOtherInformation: 'Change your delivery notes',
         createLocation: 'Create a delivery location',
         selectLocation: 'Select a delivery location',
         upsellMessage: 'Create your first delivery location with OkHi!',
         createOtherInformation: 'Delivery notes'
     };
-    var okhiDeliveryLocationButton = document.getElementById('lets-okhi');
-    var okhiStyle = new okhi.OkHiStyle({
+
+    const okhiDeliveryLocationButton = document.getElementById('lets-okhi');
+
+    const okhiStyle = new okhi.OkHiStyle({
         color: wcOkHiJson.styles.color,
         logo: wcOkHiJson.styles.logo
     });
-    var okhiConfig = new okhi.OkHiConfig({
+
+    const okhiConfig = new okhi.OkHiConfig({
         streetView: wcOkHiJson.config.streetView,
         appBar: wcOkHiJson.config.appBar
     });
+
     /**
      * event handler with compat setup
      * @param {*} obj
      * @param {*} type
      * @param {*} fn
      */
-    var okhiAddEvent = function (obj, type, fn) {
+    const okhiAddEvent = function(obj, type, fn) {
         if (obj.addEventListener) {
             obj.addEventListener(type, fn, false);
-        }
-        else if (obj.attachEvent) {
+        } else if (obj.attachEvent) {
             obj['e' + type + fn] = fn;
-            obj[type + fn] = function () {
+            obj[type + fn] = function() {
                 obj['e' + type + fn](event);
             };
             obj.attachEvent('on' + type, obj[type + fn]);
-        }
-        else {
+        } else {
             obj['on' + type] = obj['e' + type + fn];
         }
     };
+
     /**
      * Show user's selected location
      * @param {Object} user - current user
@@ -71,47 +165,71 @@ function okhi_init() {
      * @param {function} onError
      * @param {Object} currentLocationObject
      */
-    var okhiRenderLocationCard = function (user, containerElement, onSuccess, // = okhiHandleOnSuccess
-    onError, // = okhiHandleError
-    currentLocationObject) {
+    const okhiRenderLocationCard = function(
+        user: User,
+        containerElement: HTMLElement,
+        onSuccess: Function, // = okhiHandleOnSuccess
+        onError: Function, // = okhiHandleError
+        currentLocationObject?: Location
+    ) {
         // empty the container element
         // containerElement.innerHTML = '';
+
         if (!user.phone) {
-            return okhiHandleError(new Error('Enter a phone number to continue'));
+            return okhiHandleError(
+                new Error('Enter a phone number to continue')
+            );
         }
         containerElement.style.display = 'block';
-        return new okhi.OkHiLocationCard({
-            user: user,
-            // auth: okhi_auth,
-            style: okhiStyle,
-            config: okhiConfig,
-            copy: okhiCopy,
-            location: currentLocationObject
-        }, containerElement, function (error, data) {
-            if (error) {
-                // handle OkHiError
-                onError(error);
+
+        return new okhi.OkHiLocationCard(
+            {
+                user,
+                // auth: okhi_auth,
+                style: okhiStyle,
+                config: okhiConfig,
+                copy: okhiCopy,
+                location: currentLocationObject
+            },
+            containerElement,
+            function(error, data) {
+                if (error) {
+                    // handle OkHiError
+                    onError(error);
+                } else {
+                    // handle OkHiUser and OkHiLocation
+                    onSuccess(data);
+                }
             }
-            else {
-                // handle OkHiUser and OkHiLocation
-                onSuccess(data);
-            }
-        });
+        );
     };
+
     /**
      * Handle data received from OkHi
      * @param {Object} data
      * @param {function} isCallBackCard
      */
-    var okhiHandleOnSuccess = function (data) {
+    const okhiHandleOnSuccess = (data: { user: User; location: Location }) => {
         // handle your success here with the data you get back
         if (!data || !data.location) {
             return;
         }
-        var user = data.user, location = data.location;
+        const { user, location } = data;
         okhiUser = new okhi.OkHiUser(user);
-        var streetName = location.streetName, propertyName = location.propertyName, propertyNumber = location.propertyNumber, geoPoint = location.geoPoint, placeId = location.placeId, directions = location.directions, id = location.id, url = location.url, otherInformation = location.otherInformation, plusCode = location.plusCode;
-        var addressTextData = [];
+        const {
+            streetName,
+            propertyName,
+            propertyNumber,
+            geoPoint,
+            placeId,
+            directions,
+            id,
+            url,
+            otherInformation,
+            plusCode
+        } = location;
+
+        const addressTextData = [];
         if (propertyName) {
             addressTextData.push(propertyName);
         }
@@ -127,8 +245,10 @@ function okhi_init() {
         if (typeof okhiRequiredAddressField !== 'undefined') {
             okhiRequiredAddressField.value = addressTextData.join(', ').trim();
         }
-        if (typeof okhiBillingOtherInformationField !== 'undefined' &&
-            otherInformation) {
+        if (
+            typeof okhiBillingOtherInformationField !== 'undefined' &&
+            otherInformation
+        ) {
             okhiBillingOtherInformationField.value = otherInformation;
         }
         if (typeof okhiBillingPostcodeField !== 'undefined' && plusCode) {
@@ -137,22 +257,30 @@ function okhi_init() {
         if (typeof okhiBillingStreetNameField !== 'undefined' && streetName) {
             okhiBillingStreetNameField.value = streetName;
         }
-        if (typeof okhiBillingPropertyNameField !== 'undefined' &&
-            propertyName) {
+        if (
+            typeof okhiBillingPropertyNameField !== 'undefined' &&
+            propertyName
+        ) {
             okhiBillingPropertyNameField.value = propertyName;
         }
-        if (typeof okhiBillingPropertyNumberField !== 'undefined' &&
-            propertyNumber) {
+        if (
+            typeof okhiBillingPropertyNumberField !== 'undefined' &&
+            propertyNumber
+        ) {
             okhiBillingPropertyNumberField.value = propertyNumber;
         }
-        if (typeof okhiBillingOkHiLatField !== 'undefined' &&
+        if (
+            typeof okhiBillingOkHiLatField !== 'undefined' &&
             geoPoint &&
-            geoPoint.lat) {
+            geoPoint.lat
+        ) {
             okhiBillingOkHiLatField.value = geoPoint.lat;
         }
-        if (typeof okhiBillingOkHiLonField !== 'undefined' &&
+        if (
+            typeof okhiBillingOkHiLonField !== 'undefined' &&
             geoPoint &&
-            geoPoint.lon) {
+            geoPoint.lon
+        ) {
             okhiBillingOkHiLonField.value = geoPoint.lon;
         }
         if (typeof okhiBillingOkHiPlaceIdField !== 'undefined') {
@@ -164,21 +292,29 @@ function okhi_init() {
         if (typeof okhiBillingOkHiURLField !== 'undefined') {
             okhiBillingOkHiURLField.value = url || '';
         }
+
         // trigger calculation of shipping costs
         jQuery(document.body).trigger('update_checkout');
-        var currentLocationObject = new okhi.OkHiLocation(data.location);
+        const currentLocationObject = new okhi.OkHiLocation(data.location);
         if (!okhiLocationCard) {
-            okhiLocationCard = okhiRenderLocationCard(okhiUser, okhiLocationCardContainerElement, okhiHandleOnSuccess, okhiHandleError, currentLocationObject);
+            okhiLocationCard = okhiRenderLocationCard(
+                okhiUser,
+                okhiLocationCardContainerElement,
+                okhiHandleOnSuccess,
+                okhiHandleError,
+                currentLocationObject
+            );
             return;
         }
         jQuery('#lets-okhi').hide();
         jQuery('#selected-location-card').show();
     };
+
     /**
      * Handle errors from OkHi
      * @param {Object} error
      */
-    var okhiHandleError = function (error) {
+    const okhiHandleError = function(error) {
         if (error && error.code === 'invalid_phone') {
             // how a button to launch OkHi
             jQuery('#lets-okhi').show();
@@ -203,46 +339,52 @@ function okhi_init() {
             ? error.message
             : 'Something went wrong please try again';
     };
-    var handleFatalError = function (error) {
+    const handleFatalError = function(error) {
         if (error && error.code === 'invalid_phone') {
             // this is not fatal
             okhiHandleError(error);
+
             return;
         }
-        jQuery.each([
-            // '#billing_country_field',
-            // '#billing_address_1_field',
-            // '#billing_postcode_field',
-            // '.woocommerce-additional-fields',
-            '#billing_okhi_location_data_field' //given this is required
-        ], function (_, item) {
-            jQuery(item).show();
-        });
+        jQuery.each(
+            [
+                // '#billing_country_field',
+                // '#billing_address_1_field',
+                // '#billing_postcode_field',
+                // '.woocommerce-additional-fields',
+                '#billing_okhi_location_data_field' //given this is required
+            ],
+            function(_, item) {
+                jQuery(item).show();
+            }
+        );
     };
     /**
      * handle user changing phone number
      * to ensure we always have the right location for the user phone
      * changes to phone would result in re-init of the card
      */
-    var okhiHandlePhoneChange = function () {
+
+    const okhiHandlePhoneChange = function() {
         if (!okhiLocationCard) {
             // no location card so do nothing
             return;
         }
+
         if (okhiUser && okhiUser.phone === okhiBillingPhoneField.value) {
             return;
         }
         if (okhiBillingPhoneField.value) {
             okhiDeliveryLocationButton.style.display = 'none';
             okhiLocationCardContainerElement.style.display = 'block';
-        }
-        else {
+        } else {
             okhiLocationCardContainerElement.style.display = 'none';
             okhiDeliveryLocationButton.style.display = 'block';
         }
         try {
             okhiHandleError(null);
             okhiResetFields();
+
             okhiUser = new okhi.OkHiUser({
                 firstName: okhiBillingFirstNameField.value,
                 lastName: okhiBillingLastNameField.value,
@@ -254,29 +396,38 @@ function okhi_init() {
                 return;
             }
             // new card
-            okhiLocationCard = okhiRenderLocationCard(okhiUser, okhiLocationCardContainerElement, okhiHandleOnSuccess, okhiHandleError);
-        }
-        catch (error) {
+            okhiLocationCard = okhiRenderLocationCard(
+                okhiUser,
+                okhiLocationCardContainerElement,
+                okhiHandleOnSuccess,
+                okhiHandleError
+            );
+        } catch (error) {
             // hid
             okhiHandleError(error);
         }
     };
+
     /**
      * handle delivery location button click
      * to launch location manager
      */
-    var okhiHandleDeliveryLocationButtonClick = function (e) {
+
+    const okhiHandleDeliveryLocationButtonClick = function(e) {
         if (e) {
             e.preventDefault();
         }
         // reset errors
         okhiHandleError(null);
+
         // craete okhi user object
         if (!okhiBillingPhoneField || !okhiBillingPhoneField.value) {
-            return okhiHandleError(new Error('Enter a phone number to continue'));
+            return okhiHandleError(
+                new Error('Enter a phone number to continue')
+            );
         }
         try {
-            var user = new okhi.OkHiUser({
+            const user = new okhi.OkHiUser({
                 phone: okhiBillingPhoneField.value,
                 firstName: okhiBillingFirstNameField
                     ? okhiBillingFirstNameField.value
@@ -285,14 +436,16 @@ function okhi_init() {
                     ? okhiBillingLastNameField.value
                     : ''
             });
+
             // handle current location already selected
-            var currentLocationObject = null;
+            let currentLocationObject = null;
             if (okhiBillingOkHiIdField && okhiBillingOkHiIdField.value) {
                 currentLocationObject = new okhi.OkHiLocation({
                     id: okhiBillingOkHiIdField.value // The OkHi location id you want manipulated in the selected mode
                 });
             }
-            var locationManager = new okhi.OkHiLocationManager({
+
+            const locationManager = new okhi.OkHiLocationManager({
                 user: user,
                 // auth: okhi_auth,
                 style: okhiStyle,
@@ -301,7 +454,8 @@ function okhi_init() {
                 copy: okhiCopy,
                 location: currentLocationObject
             });
-            locationManager.launch(function (error, data) {
+
+            locationManager.launch(function(error, data) {
                 if (error) {
                     return okhiHandleError(error);
                 }
@@ -309,8 +463,7 @@ function okhi_init() {
                 okhiDeliveryLocationButton.style.display = 'none';
                 okhiLocationCardContainerElement.style.display = 'block';
             });
-        }
-        catch (error) {
+        } catch (error) {
             // something broke, allow user to proceed manually
             okhiHandleError(error);
             console.error('Launch manager errors:', error);
@@ -321,21 +474,28 @@ function okhi_init() {
      */
     // listen for changes in the phone field
     okhiAddEvent(okhiBillingPhoneField, 'blur', okhiHandlePhoneChange);
+
     // Delivery location button listener
-    okhiAddEvent(okhiDeliveryLocationButton, 'click', okhiHandleDeliveryLocationButtonClick);
+    okhiAddEvent(
+        okhiDeliveryLocationButton,
+        'click',
+        okhiHandleDeliveryLocationButtonClick
+    );
+
     // try to auto fix phone number
     function autoPrefixPhone() {
         if (okhiBillingPhoneField.value.indexOf('0') === 0) {
             okhiBillingPhoneField.value =
                 wcOkHiJson.countryCallingCode +
-                    okhiBillingPhoneField.value.slice(1);
+                okhiBillingPhoneField.value.slice(1);
         }
     }
+
     /**
      * reset fields set by OkHi
      */
-    var okhiResetFields = function () {
-        var fields = [
+    const okhiResetFields = function() {
+        const fields = [
             okhiRequiredAddressField,
             okhiBillingPostcodeField,
             okhiBillingOtherInformationField,
@@ -348,8 +508,7 @@ function okhi_init() {
             okhiBillingOkHiIdField,
             okhiBillingOkHiURLField
         ];
-        for (var _i = 0, fields_1 = fields; _i < fields_1.length; _i++) {
-            var field = fields_1[_i];
+        for (let field of fields) {
             field.value = '';
         }
     };
@@ -362,20 +521,26 @@ function okhi_init() {
         if (okhiBillingPhoneField && okhiBillingPhoneField.value) {
             autoPrefixPhone();
             // create OkHi User object
-            var firstName = okhiBillingFirstNameField
+            const firstName = okhiBillingFirstNameField
                 ? okhiBillingFirstNameField.value
                 : '';
-            var lastName = okhiBillingLastNameField
+            const lastName = okhiBillingLastNameField
                 ? okhiBillingLastNameField.value
                 : '';
-            var phone = okhiBillingPhoneField && okhiBillingPhoneField.value
-                ? okhiBillingPhoneField.value
-                : '';
-            okhiUser = new okhi.OkHiUser({ firstName: firstName, lastName: lastName, phone: phone });
+            const phone =
+                okhiBillingPhoneField && okhiBillingPhoneField.value
+                    ? okhiBillingPhoneField.value
+                    : '';
+            okhiUser = new okhi.OkHiUser({ firstName, lastName, phone });
+
             // show location card
-            okhiLocationCard = okhiRenderLocationCard(okhiUser, okhiLocationCardContainerElement, okhiHandleOnSuccess, okhiHandleError);
-        }
-        else {
+            okhiLocationCard = okhiRenderLocationCard(
+                okhiUser,
+                okhiLocationCardContainerElement,
+                okhiHandleOnSuccess,
+                okhiHandleError
+            );
+        } else {
             /**
              * otherwise show a button to launch OkHi
              * location manager
@@ -383,13 +548,11 @@ function okhi_init() {
             jQuery('#lets-okhi').show();
         }
         // hide default fields
-        jQuery.each(['#billing_okhi_street_name_field'], function (_, item) {
+        jQuery.each(['#billing_okhi_street_name_field'], function(_, item) {
             jQuery(item).hide();
         });
-    }
-    catch (error) {
+    } catch (error) {
         handleFatalError(error);
         console.error('Zero click card load erroring out:', error);
     }
 }
-//# sourceMappingURL=okhi-actions.js.map
