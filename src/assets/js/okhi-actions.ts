@@ -215,8 +215,6 @@ function okhi_init() {
             return;
         }
         const { user, location } = data;
-        console.log(location);
-
         okhiUser = new okhi.OkHiUser(user);
         const {
             streetName,

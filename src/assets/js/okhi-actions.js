@@ -109,7 +109,6 @@ function okhi_init() {
             return;
         }
         var user = data.user, location = data.location;
-        console.log(location);
         okhiUser = new okhi.OkHiUser(user);
         var streetName = location.streetName, propertyName = location.propertyName, propertyNumber = location.propertyNumber, geoPoint = location.geoPoint, placeId = location.placeId, directions = location.directions, id = location.id, url = location.url, otherInformation = location.otherInformation, plusCode = location.plusCode;
         var addressTextData = [];
