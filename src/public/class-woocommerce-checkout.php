@@ -375,6 +375,8 @@ class WC_OkHi_Checkout
             <div
                 id="okhi-loader">
                 <!-- Delivery location -->
+                <div class="okhi-loader-1"></div>
+                <div class="okhi-loader-2"></div>
             </div>
         <?php
     }
