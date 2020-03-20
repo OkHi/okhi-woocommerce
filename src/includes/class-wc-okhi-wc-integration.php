@@ -102,6 +102,7 @@ class WC_OkHi_Integration extends WC_Integration
                 'description' => __(
                     'Allow users to use streetview to select their gate'
                 ),
+                'default' => 'yes',
                 'desc_tip' => true
             )
         );
