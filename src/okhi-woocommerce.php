@@ -1,7 +1,7 @@
 <?php
 /**
  * @package OkHi_WooCommerce
- * @version 1.5.0
+ * @version 1.2.0
  */
 
 /**
@@ -10,7 +10,7 @@
  * Description: OkHi Integration to enable WooCommerce checkout with OkHi.
  * Author:  OkHi
  * Author URI: https://okhi.com/
- * Version: 1.5.0
+ * Version: 1.2.0
  */
 
 if (!defined('ABSPATH')) {
@@ -20,8 +20,8 @@ if (!defined('ABSPATH')) {
 define('WC_OKHI_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('WC_OKHI_PLUGIN_FILE', __FILE__);
 define('WC_OKHI_TEXT_DOMAIN', 'woocommerce');
-define('WC_OKHI_PLUGIN_VERSION', '1.5.0');
-define('WC_OKHI_PLUGIN_BUILD', 15);
+define('WC_OKHI_PLUGIN_VERSION', '1.2.0');
+define('WC_OKHI_PLUGIN_BUILD', 12);
 
 if (!class_exists('WC_OkHi_Dependancies')) {
     include_once dirname(__FILE__) . '/includes/class-wc-okhi-dependancies.php';
@@ -44,8 +44,8 @@ function wc_okhi()
 
 $GLOBALS['wc_okhi'] = wc_okhi();
 
-if (!class_exists('WC_Temp')):
-    class WC_Temp
+if (!class_exists('WC_Add_OkHi_Integration')):
+    class WC_Add_OkHi_Integration
     {
         public function __construct()
         {
@@ -53,11 +53,6 @@ if (!class_exists('WC_Temp')):
         }
         public function init()
         {
-            // if (class_exists('WC_Integration')) {
-            //     var_dump(13123);
-            // } else {
-            //     var_dump(0000);
-            // }
             if (class_exists('WC_Countries')) {
                 $countries = new WC_Countries();
                 $baseCountry = $countries->get_base_country();
@@ -101,5 +96,5 @@ if (!class_exists('WC_Temp')):
             return $links;
         }
     }
-    $WC_Temp = new WC_Temp(__FILE__);
+    $WC_Add_OkHi_Integration = new WC_Add_OkHi_Integration(__FILE__);
 endif;
