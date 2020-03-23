@@ -165,7 +165,7 @@ class WC_OkHi_Checkout
         $fields['billing']['billing_okhi_street_name'] = array(
             'label' => __('Delivery location', 'woocommerce'),
             'required' => true,
-            'class' => array('form-row-wide', 'hidden'),
+            'class' => array('form-row-wide'),
             'clear' => true
         );
         $fields['billing']['billing_okhi_property_name'] = array(
