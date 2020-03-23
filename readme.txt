@@ -2,7 +2,7 @@
 Tags: OkHi, high accuracy addresses, locations, customise woocommerce checkout fields, pluscodes
 Contributors: OkHi
 Requires at least: 4.0
-Stable tag: 1.2.0
+Stable tag: 1.2.1
 Requires PHP: 5.2.4
 Tested up to: 5.2
 
@@ -43,13 +43,17 @@ Or use the automatic installation wizard through your admin panel, just search f
 
 == Changelog ==
 
+= 1.2.1 =
+
+-   **Bugfix**: Fail more gracefully when a fatal error occurs
+
 = 1.2.0 =
 
 -   **Feature**: Improved reliability, speed and security
 -   **Feature**: Internationalisation: We have added a requirement for [E.164 formated](https://en.wikipedia.org/wiki/E.164) phone numbers
 -   **Changes**: Make sure to get updated API keys as your current ones will not work for this new release
 -   **Changes**: The street view is on by default, but you have the provision to it switch off
--   **Changes**: We have also updated out terms and privacy policy.
+-   **Changes**: We have also updated our privacy policy, [see the new policy here](https://www.okhi.com/privacy?utm_source=okhi-woocommerce-plugin%20readme) and our [terms](https://www.okhi.com/terms?utm_source=okhi-woocommerce-plugin%20readme).
 -   **Bugfix**: Fixed the issue that was allowing logged in users to checkout without an OkHi address.
 
 = 1.1.0 =
