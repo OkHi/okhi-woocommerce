@@ -1,0 +1,11 @@
+{
+    "compilerOptions": {
+        "allowJs": true,
+        "sourceMap": true,
+        "watch": true,
+        "target": "es3",
+        "outFile": "src/assets/js/okhi-actions.js",
+        "lib": ["dom", "es2015", "es5", "es6"]
+    },
+    "files": ["src/assets/js/okhi-actions.ts"]
+}

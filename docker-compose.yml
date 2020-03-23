@@ -19,7 +19,7 @@ services:
       - mysql
     ports:
       - '5050:80'
-    restart: always
+    restart: "no"
 
   mysql:
     image: mariadb
@@ -31,7 +31,7 @@ services:
       - MYSQL_USER=wordpress
       - MYSQL_PASSWORD=password
       - MYSQL_DATABASE=wordpress
-    restart: always
+    restart: "no"
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
@@ -41,6 +41,6 @@ services:
       - PMA_HOST=mysql
     links:
       - mysql
-    restart: always
+    restart: "no"
     ports:
       - '3535:80'

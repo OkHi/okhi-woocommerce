@@ -8,6 +8,12 @@
 	"scripts": {
 		"dev": "docker-compose up --build",
 		"start": "docker-compose up --build -d",
-		"stop": "docker-compose down"
+		"stop": "docker-compose down",
+		"build": "rm -rf ./build && mkdir build && cp -a src/* build && uglifyjs src/assets/js/okhi-actions.js -o build/assets/js/okhi-actions.js -c -m && zip -r --exclude=*.ts okhi-woocommerce.zip build/*"
+	},
+	"devDependencies": {
+		"@prettier/plugin-php": "^0.13.0",
+		"prettier": "^1.19.1",
+		"uglify-js": "^3.7.7"
 	}
 }

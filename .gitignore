@@ -3,3 +3,8 @@ wordpress
 wordpresswoo
 plugin-files.code-workspace
 src/okhi-woocommerce.zip
+node_modules 
+build
+svn
+*.zip
+.DS_Store
