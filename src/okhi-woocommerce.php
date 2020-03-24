@@ -1,7 +1,7 @@
 <?php
 /**
  * @package OkHi_WooCommerce
- * @version 1.2.1
+ * @version 1.2.2
  */
 
 /**
@@ -10,7 +10,7 @@
  * Description: OkHi Integration to enable WooCommerce checkout with OkHi.
  * Author:  OkHi
  * Author URI: https://okhi.com/
- * Version: 1.2.1
+ * Version: 1.2.2
  */
 
 if (!defined('ABSPATH')) {
@@ -20,8 +20,8 @@ if (!defined('ABSPATH')) {
 define('WC_OKHI_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('WC_OKHI_PLUGIN_FILE', __FILE__);
 define('WC_OKHI_TEXT_DOMAIN', 'woocommerce');
-define('WC_OKHI_PLUGIN_VERSION', '1.2.1');
-define('WC_OKHI_PLUGIN_BUILD', 13);
+define('WC_OKHI_PLUGIN_VERSION', '1.2.2');
+define('WC_OKHI_PLUGIN_BUILD', 14);
 
 if (!class_exists('WC_OkHi_Dependancies')) {
     include_once dirname(__FILE__) . '/includes/class-wc-okhi-dependancies.php';
@@ -77,23 +77,41 @@ if (!class_exists('WC_Add_OkHi_Integration')):
             // Set the plugin slug
             define('OkHi_integration_slug', 'wc-settings');
             // Setting action for plugin
-            add_filter('plugin_action_links', array(
-                $this,
-                'WC_OkHi_integration_plugin_action_links'
-            ));
+            add_filter(
+                'plugin_action_links',
+                array($this, 'WC_OkHi_integration_plugin_action_links'),
+                10,
+                5
+            );
         }
         public function add_integration($integrations)
         {
             $integrations[] = 'WC_OkHi_Integration';
             return $integrations;
         }
-        public function WC_OkHi_integration_plugin_action_links($links)
-        {
-            $links[] =
-                '<a href="' .
-                menu_page_url(OkHi_integration_slug, false) .
-                '&tab=integration&section=okhi-integration">Settings</a>';
-            return $links;
+        public function WC_OkHi_integration_plugin_action_links(
+            $actions,
+            $plugin_file
+        ) {
+            static $plugin;
+
+            if (!isset($plugin)) {
+                $plugin = plugin_basename(__FILE__);
+            }
+            if ($plugin == $plugin_file) {
+                $settings = array(
+                    'settings' =>
+                        '<a href="' .
+                        menu_page_url(OkHi_integration_slug, false) .
+                        '&tab=integration&section=okhi-integration">' .
+                        __('Settings', 'General') .
+                        '</a>'
+                );
+
+                $actions = array_merge($settings, $actions);
+            }
+
+            return $actions;
         }
     }
     $WC_Add_OkHi_Integration = new WC_Add_OkHi_Integration(__FILE__);
