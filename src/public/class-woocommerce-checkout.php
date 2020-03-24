@@ -153,13 +153,11 @@ class WC_OkHi_Checkout
         unset($address_fields['company']);
         unset($address_fields['address_2']);
         unset($address_fields['city']);
-        unset($address_fields['email']);
         unset($address_fields['state']);
         return $address_fields;
     }
     public function okhi_override_checkout_fields($fields)
     {
-        $fields['billing']['billing_email']['required'] = false;
         // $fields['billing']['billing_address_1']
         // add okhi fields
         $fields['billing']['billing_okhi_street_name'] = array(
@@ -214,7 +212,6 @@ class WC_OkHi_Checkout
         unset($fields['billing']['billing_company']);
         unset($fields['billing']['billing_address_2']);
         unset($fields['billing']['billing_city']);
-        unset($fields['billing']['billing_email']);
         unset($fields['billing']['billing_state']);
         return $fields;
     }
