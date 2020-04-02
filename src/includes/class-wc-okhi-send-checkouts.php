@@ -33,6 +33,12 @@ class WC_OkHi_Send_Checkout
             ),
             'id' => (string) $order->get_id(),
             'location' => array(
+                'id' => isset($order_meta['billing_okhi_id'])
+                    ? $order_meta['billing_okhi_id'][0]
+                    : '',
+                'token' => isset($order_meta['billing_okhi_token'][0])
+                    ? $order_meta['billing_okhi_token'][0]
+                    : '',
                 'street_name' => isset(
                     $order_meta['billing_okhi_street_name'][0]
                 )
@@ -60,15 +66,14 @@ class WC_OkHi_Send_Checkout
                     ? $order_meta['billing_okhi_place_id'][0]
                     : ''
             ),
-            'location_id' => isset($order_meta['billing_okhi_id'])
-                ? $order_meta['billing_okhi_id'][0]
-                : '',
             'value' => floatval($order->get_total()),
             'use_case' => 'e-commerce',
             'properties' => array(
                 'send_to_queue' => WC_OKHI_SEND_TO_QUEUE,
                 'payment_method' => $order->get_payment_method(),
-
+                'currency' => function_exists('get_woocommerce_currency')
+                    ? get_woocommerce_currency()
+                    : '',
                 // "basket" => $basket,
                 'user_id' => isset($user_id) ? $user_id : '',
                 'shipping' => array(

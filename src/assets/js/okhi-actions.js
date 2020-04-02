@@ -21,6 +21,7 @@ function okhi_init() {
     var okhiBillingOkHiLonField = document.getElementById('billing_okhi_lon');
     var okhiBillingOkHiPlaceIdField = document.getElementById('billing_okhi_place_id');
     var okhiBillingOkHiIdField = document.getElementById('billing_okhi_id');
+    var okhiBillingOkHiTokenField = document.getElementById('billing_okhi_token');
     var okhiBillingOkHiURLField = document.getElementById('billing_okhi_url');
     var okhiLocationCardContainerElement = document.getElementById('selected-location-card');
     var errorElement = document.getElementById('okhi-errors');
@@ -110,7 +111,7 @@ function okhi_init() {
         }
         var user = data.user, location = data.location;
         okhiUser = new okhi.OkHiUser(user);
-        var streetName = location.streetName, propertyName = location.propertyName, propertyNumber = location.propertyNumber, geoPoint = location.geoPoint, placeId = location.placeId, directions = location.directions, id = location.id, url = location.url, otherInformation = location.otherInformation, plusCode = location.plusCode;
+        var streetName = location.streetName, propertyName = location.propertyName, propertyNumber = location.propertyNumber, geoPoint = location.geoPoint, placeId = location.placeId, directions = location.directions, id = location.id, url = location.url, otherInformation = location.otherInformation, plusCode = location.plusCode, token = location.token;
         var addressTextData = [];
         if (propertyName) {
             addressTextData.push(propertyName);
@@ -160,6 +161,9 @@ function okhi_init() {
         }
         if (typeof okhiBillingOkHiIdField !== 'undefined') {
             okhiBillingOkHiIdField.value = id || '';
+        }
+        if (typeof okhiBillingOkHiTokenField !== 'undefined') {
+            okhiBillingOkHiTokenField.value = token || '';
         }
         if (typeof okhiBillingOkHiURLField !== 'undefined') {
             okhiBillingOkHiURLField.value = url || '';
