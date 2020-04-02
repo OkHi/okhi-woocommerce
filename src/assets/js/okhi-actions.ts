@@ -48,6 +48,7 @@ interface Location {
     url: string;
     otherInformation: string;
     plusCode: string;
+    token: string;
 }
 interface User {
     phone: string;
@@ -104,6 +105,9 @@ function okhi_init() {
     ) as HTMLInputElement;
     const okhiBillingOkHiIdField = document.getElementById(
         'billing_okhi_id'
+    ) as HTMLInputElement;
+    const okhiBillingOkHiTokenField = document.getElementById(
+        'billing_okhi_token'
     ) as HTMLInputElement;
     const okhiBillingOkHiURLField = document.getElementById(
         'billing_okhi_url'
@@ -226,7 +230,8 @@ function okhi_init() {
             id,
             url,
             otherInformation,
-            plusCode
+            plusCode,
+            token
         } = location;
 
         const addressTextData = [];
@@ -288,6 +293,9 @@ function okhi_init() {
         }
         if (typeof okhiBillingOkHiIdField !== 'undefined') {
             okhiBillingOkHiIdField.value = id || '';
+        }
+        if (typeof okhiBillingOkHiTokenField !== 'undefined') {
+            okhiBillingOkHiTokenField.value = token || '';
         }
         if (typeof okhiBillingOkHiURLField !== 'undefined') {
             okhiBillingOkHiURLField.value = url || '';
