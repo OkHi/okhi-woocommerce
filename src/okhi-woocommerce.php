@@ -1,7 +1,7 @@
 <?php
 /**
  * @package OkHi_WooCommerce
- * @version 1.2.2
+ * @version 1.2.3
  */
 
 /**
@@ -10,7 +10,7 @@
  * Description: OkHi Integration to enable WooCommerce checkout with OkHi.
  * Author:  OkHi
  * Author URI: https://okhi.com/
- * Version: 1.2.2
+ * Version: 1.2.3
  */
 
 if (!defined('ABSPATH')) {
@@ -20,8 +20,8 @@ if (!defined('ABSPATH')) {
 define('WC_OKHI_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('WC_OKHI_PLUGIN_FILE', __FILE__);
 define('WC_OKHI_TEXT_DOMAIN', 'woocommerce');
-define('WC_OKHI_PLUGIN_VERSION', '1.2.2');
-define('WC_OKHI_PLUGIN_BUILD', 14);
+define('WC_OKHI_PLUGIN_VERSION', '1.2.3');
+define('WC_OKHI_PLUGIN_BUILD', 15);
 
 if (!class_exists('WC_OkHi_Dependancies')) {
     include_once dirname(__FILE__) . '/includes/class-wc-okhi-dependancies.php';

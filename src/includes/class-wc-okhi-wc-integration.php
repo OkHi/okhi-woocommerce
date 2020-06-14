@@ -104,6 +104,13 @@ class WC_OkHi_Integration extends WC_Integration
                 ),
                 'default' => 'yes',
                 'desc_tip' => true
+            ),
+            'okhi_is_production_ready' => array(
+                'title' => __('Ready to go live'),
+                'type' => 'checkbox',
+                'description' => __('Switch from test mode to live'),
+                'default' => 'yes',
+                'desc_tip' => true
             )
         );
     }
