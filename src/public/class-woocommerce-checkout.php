@@ -202,6 +202,12 @@ class WC_OkHi_Checkout
             'class' => array('form-row-wide', 'hidden'),
             'clear' => true
         );
+        $fields['billing']['billing_okhi_token'] = array(
+            'label' => __('OkHi Token', 'woocommerce'),
+            'required' => false,
+            'class' => array('form-row-wide', 'hidden'),
+            'clear' => true
+        );
         $fields['billing']['billing_okhi_url'] = array(
             'label' => __('OkHi URL', 'woocommerce'),
             'required' => false,
@@ -265,6 +271,13 @@ class WC_OkHi_Checkout
                 $order_id,
                 'billing_okhi_id',
                 sanitize_text_field($_POST['billing_okhi_id'])
+            );
+        }
+        if (!empty($_POST['billing_okhi_token'])) {
+            update_post_meta(
+                $order_id,
+                'billing_okhi_token',
+                sanitize_text_field($_POST['billing_okhi_token'])
             );
         }
         if (!empty($_POST['billing_okhi_url'])) {
