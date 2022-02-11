@@ -312,6 +312,16 @@ function okhi_init() {
      * Add listeners
      */
     // listen for changes in the phone field
+    okhiBillingFirstNameField.addEventListener('input', (ev: any) => {
+        locationCard.$set({
+            userFirstName: ev.target.value,
+        })
+    });
+    okhiBillingLastNameField.addEventListener('input', (ev: any) => {
+        locationCard.$set({
+            userLastName: ev.target.value,
+        })
+    });
     okhiBillingPhoneField.addEventListener('input', (ev: any) => {
         locationCard.$set({
             userPhoneNumber: autoPrefixPhone(ev.target.value)
