@@ -99,8 +99,6 @@ class WC_OkHi_Checkout
                 '&branchId=' .
                 WC_OKHI_BRANCH_ID .
                 '&callback=okhi_init#asyncload';
-            // $url =
-            //     'https://unpkg.com/okcollect@0.0.5/dist/okcollect-sandbox.js';
             $script_dep = ['jquery', 'wc-checkout'];
             wp_register_script(
                 'wc_okhi_js-script',

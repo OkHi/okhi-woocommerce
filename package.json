@@ -1,19 +1,26 @@
 {
-	"name": "okhi-woocommerce",
-	"version": "1.0.0",
-	"main": "index.js",
-	"repository": "https://github.com/OkHi/okhi-woocommerce.git",
-	"author": "OkHi <teamokhi@okhi.com>",
-	"license": "MIT",
-	"scripts": {
-		"dev": "docker-compose up --build",
-		"start": "docker-compose up --build -d",
-		"stop": "docker-compose down",
-		"build": "rm -rf build && mkdir build && cp -a src/* build && uglifyjs src/assets/js/okhi-actions.js -o build/assets/js/okhi-actions.js -c -m && zip -r --exclude=*.ts okhi-woocommerce.zip build/*"
-	},
-	"devDependencies": {
-		"@prettier/plugin-php": "^0.13.0",
-		"prettier": "^1.19.1",
-		"uglify-js": "^3.7.7"
-	}
+    "name": "okhi-woocommerce",
+    "version": "1.0.0",
+    "main": "index.ts",
+    "repository": "https://github.com/OkHi/okhi-woocommerce.git",
+    "author": "OkHi <teamokhi@okhi.com>",
+    "license": "MIT",
+    "scripts": {
+        "dev": "docker-compose up --build",
+        "start": "docker-compose up --build -d",
+        "stop": "docker-compose down",
+        "build": "npx rollup --config rollup.config.js && rm -rf build && mkdir build && rsync -av src/* build --exclude assets/ts && zip -r okhi-woocommerce.zip build/*",
+        "build:dev": "webpack --mode development"
+    },
+    "devDependencies": {
+        "@prettier/plugin-php": "^0.18.0",
+        "@rollup/plugin-typescript": "^8.3.0",
+        "@types/jquery": "^3.5.13",
+        "prettier": "^2.5.1",
+        "rollup": "^2.67.2",
+        "rollup-plugin-babel-minify": "^10.0.0",
+        "tslib": "^2.3.1",
+        "typescript": "^4.5.5",
+        "uglify-js": "^3.15.1"
+    }
 }
