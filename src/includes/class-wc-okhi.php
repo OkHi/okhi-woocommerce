@@ -21,7 +21,7 @@ final class WC_OkHi
             $this->define_constants();
             $this->includes();
         } else {
-            add_action('admin_notices', array($this, 'admin_notices'), 15);
+            add_action('admin_notices', [$this, 'admin_notices'], 15);
         }
     }
 
@@ -123,7 +123,7 @@ final class WC_OkHi
         if (WC_OKHI_ENVIRONMENT == 'production') {
             return 'https://api.okhi.io/v5';
         } else {
-            return 'https://sandbox-api.okhi.io/v5';
+            return 'https://dev-api.okhi.io/v5';
         }
     }
 

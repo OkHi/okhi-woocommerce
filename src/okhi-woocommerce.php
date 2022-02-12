@@ -1,7 +1,8 @@
 <?php
 /**
  * @package OkHi_WooCommerce
- * @version 1.2.4
+ * @version 1.3.0
+ *
  */
 
 /**
@@ -10,7 +11,9 @@
  * Description: OkHi Integration to enable WooCommerce checkout with OkHi.
  * Author:  OkHi
  * Author URI: https://okhi.com/
- * Version: 1.2.4
+ * Version: 1.3.0
+ * WC requires at least: 3.0.0
+ * WC tested up to: 3.2.0
  */
 
 if (!defined('ABSPATH')) {
@@ -20,7 +23,7 @@ if (!defined('ABSPATH')) {
 define('WC_OKHI_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('WC_OKHI_PLUGIN_FILE', __FILE__);
 define('WC_OKHI_TEXT_DOMAIN', 'woocommerce');
-define('WC_OKHI_PLUGIN_VERSION', '1.2.4');
+define('WC_OKHI_PLUGIN_VERSION', '1.3.0');
 define('WC_OKHI_PLUGIN_BUILD', 16);
 
 if (!class_exists('WC_OkHi_Dependancies')) {
@@ -49,7 +52,7 @@ if (!class_exists('WC_Add_OkHi_Integration')):
     {
         public function __construct()
         {
-            add_action('plugins_loaded', array($this, 'init'));
+            add_action('plugins_loaded', [$this, 'init']);
         }
         public function init()
         {
@@ -70,16 +73,13 @@ if (!class_exists('WC_Add_OkHi_Integration')):
                     '/includes/class-wc-okhi-wc-integration.php';
             }
             // Register the integration.
-            add_filter('woocommerce_integrations', array(
-                $this,
-                'add_integration'
-            ));
+            add_filter('woocommerce_integrations', [$this, 'add_integration']);
             // Set the plugin slug
             define('OkHi_integration_slug', 'wc-settings');
             // Setting action for plugin
             add_filter(
                 'plugin_action_links',
-                array($this, 'WC_OkHi_integration_plugin_action_links'),
+                [$this, 'WC_OkHi_integration_plugin_action_links'],
                 10,
                 5
             );
@@ -99,14 +99,14 @@ if (!class_exists('WC_Add_OkHi_Integration')):
                 $plugin = plugin_basename(__FILE__);
             }
             if ($plugin == $plugin_file) {
-                $settings = array(
+                $settings = [
                     'settings' =>
                         '<a href="' .
                         menu_page_url(OkHi_integration_slug, false) .
                         '&tab=integration&section=okhi-integration">' .
                         __('Settings', 'General') .
-                        '</a>'
-                );
+                        '</a>',
+                ];
 
                 $actions = array_merge($settings, $actions);
             }
