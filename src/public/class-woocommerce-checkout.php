@@ -128,9 +128,7 @@ class WC_OkHi_Checkout
                 'styles' => $customerStyles,
                 'app' => $app,
                 'countryCallingCode' => WC_OKHI_COUNTRY_CALLING_CODE,
-                'key' => base64_encode(
-                    WC_OKHI_BRANCH_ID . ':' . WC_OKHI_CLIENT_API_KEY
-                ),
+                'key' => WC_OKHI_CLIENT_API_KEY,
             ];
             wp_localize_script('wc_okhi_js-script', 'wcOkHiJson', $wcjson);
             wp_enqueue_script('wc_okhi_js-script');
@@ -154,7 +152,7 @@ class WC_OkHi_Checkout
         // $fields['billing']['billing_address_1']
         // add okhi fields
         $fields['billing']['billing_okhi_street_name'] = [
-            'label' => __('Delivery location', 'woocommerce'),
+            'label' => __('Delivery address', 'woocommerce'),
             'required' => true,
             'class' => ['form-row-wide'],
             'clear' => true,
@@ -362,19 +360,22 @@ class WC_OkHi_Checkout
     public function add_okhi_elements_to_checkout()
     {
         ?>
-            <div id="okhi-errors"></div>
-            <!-- OkHi location card -->
-            <div
-                id="selected-location-card"
-                style="height:200px; display: none;"
-            ></div>
-            
-            <!-- loading placeholder -->
-            <div
-                id="okhi-loader">
-                <!-- Delivery location -->
-                <div class="okhi-loader-1"></div>
-            </div>
+            <div>
+                <label for="billing_email" class="">Delivery address&nbsp;<abbr class="required" title="required">*</abbr></label>
+                <div id="okhi-errors"></div>
+                <!-- OkHi location card -->
+                <div
+                    id="selected-location-card"
+                    style="height:200px; display: none;"
+                ></div>
+                
+                <!-- loading placeholder -->
+                <div
+                    id="okhi-loader">
+                    <!-- Delivery address -->
+                    <div class="okhi-loader-1"></div>
+                </div>
+    </div>
         <?php
     }
 }
