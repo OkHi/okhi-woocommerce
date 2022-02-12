@@ -21,7 +21,7 @@ final class WC_OkHi
             $this->define_constants();
             $this->includes();
         } else {
-            add_action('admin_notices', array($this, 'admin_notices'), 15);
+            add_action('admin_notices', [$this, 'admin_notices'], 15);
         }
     }
 
