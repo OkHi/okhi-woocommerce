@@ -8,6 +8,7 @@ export default {
         format: 'esm',
         compact: true
     },
+    sourcemap: true,
     plugins: [
         rollupTypescript({
             tsconfig: './tsconfig.json'
