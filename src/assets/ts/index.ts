@@ -23,7 +23,7 @@ function okhi_init() {
             userLastName: billingLastNameField.val(),
             userPhoneNumber: autoPrefixPhone(billingPhoneField.val() as string),
             onAddressSelected: okCollectSuccessHandler,
-            onError: console.log,
+            onError: okCollectErrorHandler,
             streetviewEnabled: wcOkHiJson.config.streetviewEnabled,
             toTheDoorEnabled: wcOkHiJson.config.toTheDoorEnabled,
             name: 'OkHi',
