@@ -8,7 +8,8 @@ export interface PreloadedJSONData {
         appBar: {
             color: string;
         };
-        streetView: boolean;
+        streetviewEnabled: boolean;
+        toTheDoorEnabled: boolean;
     };
     styles: {
         color: string;
