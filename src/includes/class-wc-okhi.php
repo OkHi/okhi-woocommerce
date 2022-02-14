@@ -54,6 +54,14 @@ final class WC_OkHi
                 ? true
                 : false
         );
+
+        $this->internalDefine(
+            'WC_OKHI_SHOW_TO_THE_DOOR',
+            isset($OKHI_SETTINGS['okhi_show_to_the_door']) &&
+            $OKHI_SETTINGS['okhi_show_to_the_door'] !== 'no'
+                ? true
+                : false
+        );
         $this->internalDefine(
             'WC_OKHI_PRIMARY_COLOR',
             $OKHI_SETTINGS['okhi_primary_color']

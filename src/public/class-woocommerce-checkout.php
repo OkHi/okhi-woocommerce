@@ -116,7 +116,8 @@ class WC_OkHi_Checkout
                 'appBar' => [
                     'color' => WC_OKHI_HEADER_BACKGROUND_COLOR,
                 ],
-                'streetView' => WC_OKHI_SHOW_STREETVIEW,
+                'streetviewEnabled' => WC_OKHI_SHOW_STREETVIEW,
+                'toTheDoorEnabled' => WC_OKHI_SHOW_TO_THE_DOOR,
             ];
             $app = [
                 'name' => WC_OKHI_TEXT_DOMAIN,

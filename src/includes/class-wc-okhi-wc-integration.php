@@ -27,50 +27,50 @@ class WC_OkHi_Integration extends WC_Integration
         $this->okhi_server_api_key = $this->get_option('okhi_server_api_key');
 
         // Actions.
-        add_action('woocommerce_update_options_integration_' . $this->id, array(
+        add_action('woocommerce_update_options_integration_' . $this->id, [
             $this,
-            'process_admin_options'
-        ));
+            'process_admin_options',
+        ]);
     }
     /**
      * Initialize integration settings form fields.
      */
     public function init_form_fields()
     {
-        $this->form_fields = array(
-            'okhi_client_api_key' => array(
+        $this->form_fields = [
+            'okhi_client_api_key' => [
                 'title' => __('Client API key'),
                 'type' => 'text',
                 'description' => __('Enter client API key'),
                 'desc_tip' => true,
                 'default' => '',
-                'css' => 'width:270px;'
-            ),
-            'okhi_server_api_key' => array(
+                'css' => 'width:270px;',
+            ],
+            'okhi_server_api_key' => [
                 'title' => __('Server API Key'),
                 'type' => 'text',
                 'description' => __('Enter your server API Key'),
                 'desc_tip' => true,
                 'default' => '',
-                'css' => 'width:270px;'
-            ),
-            'okhi_branch_id' => array(
+                'css' => 'width:270px;',
+            ],
+            'okhi_branch_id' => [
                 'title' => __('Branch ID'),
                 'type' => 'text',
                 'description' => __('ID for the given branch'),
                 'desc_tip' => true,
                 'default' => '',
-                'css' => 'width:270px;'
-            ),
-            'okhi_send_to_queue' => array(
+                'css' => 'width:270px;',
+            ],
+            'okhi_send_to_queue' => [
                 'title' => __('Send to OkQueue'),
                 'type' => 'checkbox',
                 'description' => __(
                     'Check this box only if you are using OkQueue App'
                 ),
-                'desc_tip' => true
-            ),
-            'okhi_logo' => array(
+                'desc_tip' => true,
+            ],
+            'okhi_logo' => [
                 'title' => __('Path to your logo'),
                 'type' => 'text',
                 'description' => __(
@@ -78,41 +78,50 @@ class WC_OkHi_Integration extends WC_Integration
                 ),
                 'desc_tip' => true,
                 'default' => 'https://cdn.okhi.co/okhi-logo-white.svg',
-                'css' => 'width:270px;'
-            ),
-            'okhi_header_background_color' => array(
+                'css' => 'width:270px;',
+            ],
+            'okhi_header_background_color' => [
                 'title' => __('Header background color'),
                 'type' => 'text',
                 'description' => __(' eg. #00838F'),
                 'desc_tip' => true,
                 'default' => '#00838F',
-                'css' => 'width:270px;'
-            ),
-            'okhi_primary_color' => array(
+                'css' => 'width:270px;',
+            ],
+            'okhi_primary_color' => [
                 'title' => __('Primary color'),
                 'type' => 'text',
                 'description' => __(' eg. #00838F'),
                 'desc_tip' => true,
                 'default' => '#00838F',
-                'css' => 'width:270px;'
-            ),
-            'okhi_show_streetview' => array(
+                'css' => 'width:270px;',
+            ],
+            'okhi_show_streetview' => [
                 'title' => __('Show streetview'),
                 'type' => 'checkbox',
                 'description' => __(
                     'Allow users to use streetview to select their gate'
                 ),
+                'default' => 'no',
+                'desc_tip' => true,
+            ],
+            'okhi_show_to_the_door' => [
+                'title' => __('Get detailed address details'),
+                'type' => 'checkbox',
+                'description' => __(
+                    'Show detailed address fields such as building, apartment etc.'
+                ),
                 'default' => 'yes',
-                'desc_tip' => true
-            ),
-            'okhi_is_production_ready' => array(
+                'desc_tip' => true,
+            ],
+            'okhi_is_production_ready' => [
                 'title' => __('Ready to go live'),
                 'type' => 'checkbox',
                 'description' => __('Switch from test mode to live'),
                 'default' => 'yes',
-                'desc_tip' => true
-            )
-        );
+                'desc_tip' => true,
+            ],
+        ];
     }
 }
 ?>
