@@ -10,7 +10,7 @@
         "start": "docker-compose up --build -d",
         "stop": "docker-compose down",
         "build": "npx rollup --config rollup.config.js && rm -rf build && mkdir build && rsync -av src/* build --exclude assets/ts && zip -r okhi-woocommerce.zip build/*",
-        "build:dev": "webpack --mode development"
+        "build:dev": "npx rollup --config rollup.config.js --watch"
     },
     "devDependencies": {
         "@prettier/plugin-php": "^0.18.0",
