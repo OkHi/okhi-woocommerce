@@ -22,8 +22,8 @@ if (!defined('ABSPATH')) {
 
 define('WC_OKHI_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('WC_OKHI_PLUGIN_FILE', __FILE__);
-define('WC_OKHI_TEXT_DOMAIN', 'woocommerce');
-define('WC_OKHI_PLUGIN_VERSION', '1.3.3');
+define('WC_OKHI_TEXT_DOMAIN', get_bloginfo('name'));
+define('WC_OKHI_PLUGIN_VERSION', get_bloginfo('version'));
 define('WC_OKHI_PLUGIN_BUILD', 16);
 
 if (!class_exists('WC_OkHi_Dependancies')) {
