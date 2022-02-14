@@ -4,7 +4,9 @@ import { okCollectErrorHandler } from './functions/errorHandler';
 import { handleFatalError } from './functions/fatalErrorHandler';
 import { resetOkHiFields } from './functions/reset-fields';
 import { okCollectSuccessHandler } from './functions/successHandler';
-const { okcollect, wcOkHiJson } = window;
+import { PreloadedJSONData } from './interfaces/preloaded-json-data.interface';
+declare const okcollect: any;
+declare const wcOkHiJson: PreloadedJSONData;
 
 function okhi_init() {
     const billingFirstNameField = jQuery(OkHiFields.billingFirstNameField);
@@ -22,8 +24,8 @@ function okhi_init() {
             userPhoneNumber: autoPrefixPhone(billingPhoneField.val() as string),
             onAddressSelected: okCollectSuccessHandler,
             onError: console.log,
-            streetviewEnabled: true,
-            toTheDoorEnabled: true,
+            streetviewEnabled: wcOkHiJson.config.streetviewEnabled,
+            toTheDoorEnabled: wcOkHiJson.config.toTheDoorEnabled,
             name: 'OkHi',
             styleSettings: {
                 primaryColor: wcOkHiJson.styles.color,
