@@ -1,7 +1,9 @@
 import { OkHiFields } from '../fields';
 import { Location } from '../interfaces/location.interface';
+import { okCollectErrorHandler } from './errorHandler';
 
 export const okCollectSuccessHandler = (data: Location) => {
+    okCollectErrorHandler(null);
     const billingPostcodeField = jQuery(OkHiFields.billingPostcodeField);
     const billingOtherInformationField = jQuery(
         OkHiFields.billingOtherInformationField
