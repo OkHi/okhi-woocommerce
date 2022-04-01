@@ -110,6 +110,7 @@ class WC_OkHi_Checkout
             wp_register_script('wc_okhi-lib', $url, ['wc_okhi_js-script']);
             $customerStyles = [
                 'color' => WC_OKHI_PRIMARY_COLOR,
+                'highlightColor' => WC_OKHI_HIGHLIGHT_COLOR,
                 'logo' => WC_OKHI_CUSTOMER_LOGO,
             ];
             $customerConfig = [
@@ -141,11 +142,14 @@ class WC_OkHi_Checkout
         $address_fields['last_name']['required'] = false;
         $address_fields['postcode']['required'] = false;
         $address_fields['address_1']['required'] = false;
+        $address_fields['city']['required'] = false;
         unset($address_fields['postcode']['validate']);
-        unset($address_fields['company']);
-        unset($address_fields['address_2']);
-        unset($address_fields['city']);
-        unset($address_fields['state']);
+        $address_fields['okhi_state']['type'] = 'text';
+        $address_fields['okhi_state']['class'] = ['form-row-wide'];
+        $address_fields['okhi_state']['required'] = false;
+        $address_fields['okhi_state']['label'] = __('State');
+        $address_fields['okhi_state']['placeholder'] = __('Enter state');
+
         return $address_fields;
     }
     public function okhi_override_checkout_fields($fields)
@@ -209,8 +213,16 @@ class WC_OkHi_Checkout
         // remove irrelevant fields
         unset($fields['billing']['billing_company']);
         unset($fields['billing']['billing_address_2']);
-        unset($fields['billing']['billing_city']);
         unset($fields['billing']['billing_state']);
+        $fields['billing']['billing_first_name']['priority'] = 1;
+        $fields['billing']['billing_last_name']['priority'] = 2;
+        $fields['billing']['billing_country']['priority'] = 4;
+        $fields['billing']['billing_state']['priority'] = 5;
+        $fields['billing']['billing_okhi_street_name']['priority'] = 6;
+        $fields['billing']['billing_city']['priority'] = 8;
+        $fields['billing']['billing_postcode']['priority'] = 9;
+        $fields['billing']['billing_email']['priority'] = 10;
+        $fields['billing']['billing_phone']['priority'] = 11;
         return $fields;
     }
 
@@ -279,6 +291,13 @@ class WC_OkHi_Checkout
                 sanitize_text_field($_POST['billing_okhi_url'])
             );
         }
+        if (!empty($_POST['billing_okhi_state'])) {
+            update_post_meta(
+                $order_id,
+                'billing_okhi_state',
+                sanitize_text_field($_POST['billing_okhi_state'])
+            );
+        }
     }
 
     public function okhi_customize_wc_errors($error)
@@ -305,6 +324,12 @@ class WC_OkHi_Checkout
             '" target="_blank">' .
             get_post_meta($order->get_id(), 'billing_okhi_url', true) .
             '</a></p>';
+
+        echo '<p><strong>' .
+            __('State') .
+            ':</strong> <br/><span>' .
+            get_post_meta($order->get_id(), 'billing_okhi_state', true) .
+            '</span></p>';
     }
     /**
      * change checkout page titles
