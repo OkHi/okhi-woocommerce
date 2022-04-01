@@ -10,4 +10,6 @@ export interface Location {
     place_id: string;
     plus_code: string;
     token: string;
+    city: string;
+    state: string;
 }

@@ -22,6 +22,9 @@ export const okCollectSuccessHandler = (data: Location) => {
     const billingOkHiURLField = jQuery(OkHiFields.billingOkHiURLField);
     const requiredAddressField = jQuery(OkHiFields.requiredAddressField);
     const billingOkHiTokenField = jQuery(OkHiFields.billingOkHiTokenField);
+
+    const billingStateField = jQuery(OkHiFields.billingStateField);
+    const billingCityField = jQuery(OkHiFields.billingCityField);
     // handle your success here with the data you get back
     if (!data) {
         return;
@@ -37,7 +40,9 @@ export const okCollectSuccessHandler = (data: Location) => {
         other_information: otherInformation,
         plus_code: plusCode,
         place_id,
-        token
+        token,
+        city,
+        state
     } = data;
 
     const addressTextData = [];
@@ -99,6 +104,13 @@ export const okCollectSuccessHandler = (data: Location) => {
     }
     if (typeof billingOkHiURLField !== 'undefined') {
         billingOkHiURLField.val(url || '');
+    }
+
+    if (typeof billingCityField !== 'undefined' && city) {
+        billingCityField.val(city);
+    }
+    if (typeof billingStateField !== 'undefined' && state) {
+        billingStateField.val(state);
     }
 
     // trigger calculation of shipping costs
