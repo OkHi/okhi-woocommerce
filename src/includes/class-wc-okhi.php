@@ -63,6 +63,12 @@ final class WC_OkHi
                 : false
         );
         $this->internalDefine(
+            'WC_OKHI_HIGHLIGHT_COLOR',
+            isset($OKHI_SETTINGS['okhi_highlight_color'])
+                ? $OKHI_SETTINGS['okhi_highlight_color']
+                : '#FFFFFF'
+        );
+        $this->internalDefine(
             'WC_OKHI_PRIMARY_COLOR',
             $OKHI_SETTINGS['okhi_primary_color']
         );

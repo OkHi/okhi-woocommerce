@@ -88,6 +88,14 @@ class WC_OkHi_Integration extends WC_Integration
                 'default' => '#00838F',
                 'css' => 'width:270px;',
             ],
+            'okhi_highlight_color' => [
+                'title' => __('Highlight color'),
+                'type' => 'text',
+                'description' => __(' eg. #FFFFFF'),
+                'desc_tip' => true,
+                'default' => '#FFFFFF',
+                'css' => 'width:270px;',
+            ],
             'okhi_primary_color' => [
                 'title' => __('Primary color'),
                 'type' => 'text',

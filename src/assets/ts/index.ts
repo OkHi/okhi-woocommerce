@@ -29,7 +29,7 @@ function okhi_init() {
             name: 'OkHi',
             styleSettings: {
                 primaryColor: wcOkHiJson.styles.color,
-                highlightColor: '#85FFC7'
+                highlightColor: wcOkHiJson.styles.highlightColor
             },
             appSettings: {
                 name: wcOkHiJson.app.name,

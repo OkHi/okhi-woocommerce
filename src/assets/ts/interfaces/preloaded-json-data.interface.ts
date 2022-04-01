@@ -13,6 +13,7 @@ export interface PreloadedJSONData {
     };
     styles: {
         color: string;
+        highlightColor: string;
         logo: string;
         name: string;
         classes: {
