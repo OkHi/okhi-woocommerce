@@ -3,6 +3,7 @@ wordpress
 wordpresswoo
 plugin-files.code-workspace
 src/okhi-woocommerce.zip
+src/assets/js/okhi-actions.js
 node_modules 
 build
 svn

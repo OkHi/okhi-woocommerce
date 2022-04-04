@@ -4,7 +4,9 @@ import { okCollectErrorHandler } from './functions/errorHandler';
 import { handleFatalError } from './functions/fatalErrorHandler';
 import { resetOkHiFields } from './functions/reset-fields';
 import { okCollectSuccessHandler } from './functions/successHandler';
-const { okcollect, wcOkHiJson } = window;
+import { PreloadedJSONData } from './interfaces/preloaded-json-data.interface';
+declare const okcollect: any;
+declare const wcOkHiJson: PreloadedJSONData;
 
 function okhi_init() {
     const billingFirstNameField = jQuery(OkHiFields.billingFirstNameField);
@@ -21,13 +23,13 @@ function okhi_init() {
             userLastName: billingLastNameField.val(),
             userPhoneNumber: autoPrefixPhone(billingPhoneField.val() as string),
             onAddressSelected: okCollectSuccessHandler,
-            onError: console.log,
-            streetviewEnabled: true,
-            toTheDoorEnabled: true,
-            name: 'OkHi',
+            onError: okCollectErrorHandler,
+            streetviewEnabled: wcOkHiJson.config.streetviewEnabled,
+            toTheDoorEnabled: wcOkHiJson.config.toTheDoorEnabled,
+            isDarkMode: wcOkHiJson.config.isDarkMode,
             styleSettings: {
                 primaryColor: wcOkHiJson.styles.color,
-                highlightColor: '#85FFC7'
+                highlightColor: wcOkHiJson.styles.highlightColor
             },
             appSettings: {
                 name: wcOkHiJson.app.name,

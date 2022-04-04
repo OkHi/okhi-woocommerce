@@ -16,4 +16,6 @@ export class OkHiFields {
     static billingOkHiURLField = '#billing_okhi_url';
     static locationCardContainerElement = '#selected-location-card';
     static errorElement = '#okhi-errors';
+    static billingStateField = '#billing_okhi_state';
+    static billingCityField = '#billing_city';
 }
