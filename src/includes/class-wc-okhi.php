@@ -62,6 +62,15 @@ final class WC_OkHi
                 ? true
                 : false
         );
+
+        $this->internalDefine(
+            'WC_OKHI_IS_DARK_MODE',
+            isset($OKHI_SETTINGS['okhi_is_dark_mode']) &&
+            $OKHI_SETTINGS['okhi_is_dark_mode'] !== 'no'
+                ? true
+                : false
+        );
+
         $this->internalDefine(
             'WC_OKHI_HIGHLIGHT_COLOR',
             isset($OKHI_SETTINGS['okhi_highlight_color'])
@@ -84,25 +93,6 @@ final class WC_OkHi
             'WC_OKHI_BRANCH_ID',
             $OKHI_SETTINGS['okhi_branch_id']
         );
-        $this->internalDefine(
-            'WC_OKHI_HEADER_BACKGROUND_COLOR',
-            $OKHI_SETTINGS['okhi_header_background_color']
-        );
-        $this->internalDefine(
-            'WC_OKHI_CUSTOMER_LOGO',
-            $OKHI_SETTINGS['okhi_logo']
-        );
-        $this->internalDefine(
-            'WC_OKHI_SEND_TO_QUEUE',
-            isset($OKHI_SETTINGS['okhi_send_to_queue']) &&
-                $OKHI_SETTINGS['okhi_send_to_queue'] !== 'no'
-        );
-
-        // if (trim(strtolower(WC_OKHI_ENVIRONMENT)) == 'production') {
-        //     $this->internalDefine('WC_OKHI_MIN_SUFFIX', '.min');
-        // } else {
-        //     $this->internalDefine('WC_OKHI_MIN_SUFFIX', '');
-        // }
     }
 
     private function internalDefine($name, $value)
@@ -137,7 +127,7 @@ final class WC_OkHi
         if (WC_OKHI_ENVIRONMENT == 'production') {
             return 'https://api.okhi.io/v5';
         } else {
-            return 'https://sandbox-api.okhi.io/v5';
+            return 'https://dev-api.okhi.io/v5';
         }
     }
 

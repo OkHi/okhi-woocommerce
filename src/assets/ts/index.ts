@@ -26,7 +26,7 @@ function okhi_init() {
             onError: okCollectErrorHandler,
             streetviewEnabled: wcOkHiJson.config.streetviewEnabled,
             toTheDoorEnabled: wcOkHiJson.config.toTheDoorEnabled,
-            name: 'OkHi',
+            isDarkMode: wcOkHiJson.config.isDarkMode,
             styleSettings: {
                 primaryColor: wcOkHiJson.styles.color,
                 highlightColor: wcOkHiJson.styles.highlightColor

@@ -111,14 +111,11 @@ class WC_OkHi_Checkout
             $customerStyles = [
                 'color' => WC_OKHI_PRIMARY_COLOR,
                 'highlightColor' => WC_OKHI_HIGHLIGHT_COLOR,
-                'logo' => WC_OKHI_CUSTOMER_LOGO,
             ];
             $customerConfig = [
-                'appBar' => [
-                    'color' => WC_OKHI_HEADER_BACKGROUND_COLOR,
-                ],
                 'streetviewEnabled' => WC_OKHI_SHOW_STREETVIEW,
                 'toTheDoorEnabled' => WC_OKHI_SHOW_TO_THE_DOOR,
+                'isDarkMode' => WC_OKHI_IS_DARK_MODE,
             ];
             $app = [
                 'name' => WC_OKHI_TEXT_DOMAIN,

@@ -62,32 +62,6 @@ class WC_OkHi_Integration extends WC_Integration
                 'default' => '',
                 'css' => 'width:270px;',
             ],
-            'okhi_send_to_queue' => [
-                'title' => __('Send to OkQueue'),
-                'type' => 'checkbox',
-                'description' => __(
-                    'Check this box only if you are using OkQueue App'
-                ),
-                'desc_tip' => true,
-            ],
-            'okhi_logo' => [
-                'title' => __('Path to your logo'),
-                'type' => 'text',
-                'description' => __(
-                    'eg. https://cdn.okhi.co/okhi-logo-white.svg'
-                ),
-                'desc_tip' => true,
-                'default' => 'https://cdn.okhi.co/okhi-logo-white.svg',
-                'css' => 'width:270px;',
-            ],
-            'okhi_header_background_color' => [
-                'title' => __('Header background color'),
-                'type' => 'text',
-                'description' => __(' eg. #00838F'),
-                'desc_tip' => true,
-                'default' => '#00838F',
-                'css' => 'width:270px;',
-            ],
             'okhi_highlight_color' => [
                 'title' => __('Highlight color'),
                 'type' => 'text',
@@ -122,6 +96,15 @@ class WC_OkHi_Integration extends WC_Integration
                 'default' => 'yes',
                 'desc_tip' => true,
             ],
+
+            'okhi_is_dark_mode' => [
+                'title' => __('Show dark mode'),
+                'type' => 'checkbox',
+                'description' => __('Launch OkCollect in dark mode'),
+                'default' => 'no',
+                'desc_tip' => true,
+            ],
+
             'okhi_is_production_ready' => [
                 'title' => __('Ready to go live'),
                 'type' => 'checkbox',

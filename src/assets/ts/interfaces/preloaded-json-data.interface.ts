@@ -5,16 +5,13 @@ export interface PreloadedJSONData {
         build: number;
     };
     config: {
-        appBar: {
-            color: string;
-        };
         streetviewEnabled: boolean;
         toTheDoorEnabled: boolean;
+        isDarkMode: boolean;
     };
     styles: {
         color: string;
         highlightColor: string;
-        logo: string;
         name: string;
         classes: {
             'lc-container': string;
