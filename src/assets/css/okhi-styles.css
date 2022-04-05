@@ -9,6 +9,8 @@ button#lets-okhi {
 
 #billing_country_field,
 #billing_address_1_field,
+#billing_address_2_field,
+#billing_company_field,
 #billing_postcode_field,
 /* #billing_okhi_street_name_field, */
 #billing_okhi_property_name_field,
@@ -17,10 +19,11 @@ button#lets-okhi {
 #billing_okhi_lon_field,
 #billing_okhi_place_id_field,
 #billing_okhi_id_field,
+
 #billing_okhi_token_field,
 #billing_okhi_url_field,
+#billing_okhi_neighborhood_field,
 #billing_city_field,
-#billing_state_field,
 #billing_okhi_state_field,
 .woocommerce-additional-fields {
     display: none !important;

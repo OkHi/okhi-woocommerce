@@ -141,85 +141,102 @@ class WC_OkHi_Checkout
         $address_fields['address_1']['required'] = false;
         $address_fields['city']['required'] = false;
         unset($address_fields['postcode']['validate']);
-        $address_fields['okhi_state']['type'] = 'text';
-        $address_fields['okhi_state']['class'] = ['form-row-wide'];
-        $address_fields['okhi_state']['required'] = false;
-        $address_fields['okhi_state']['label'] = __('State');
-        $address_fields['okhi_state']['placeholder'] = __('Enter state');
+        unset($address_fields['state']['validate']);
 
         return $address_fields;
     }
     public function okhi_override_checkout_fields($fields)
     {
-        // $fields['billing']['billing_address_1']
+        $fields['billing']['billing_first_name']['priority'] = 1;
+        $fields['billing']['billing_last_name']['priority'] = 2;
+        $fields['billing']['billing_phone']['priority'] = 3;
+        $fields['billing']['billing_city']['priority'] = 4;
+        $fields['billing']['billing_postcode']['priority'] = 5;
+        $fields['billing']['billing_email']['priority'] = 6;
+        $fields['billing']['billing_country']['priority'] = 7;
         // add okhi fields
         $fields['billing']['billing_okhi_street_name'] = [
             'label' => __('Delivery address', 'woocommerce'),
             'required' => true,
             'class' => ['form-row-wide'],
             'clear' => true,
+            'priority' => 100,
         ];
         $fields['billing']['billing_okhi_property_name'] = [
             'label' => __('Building name', 'woocommerce'),
             'required' => false,
             'class' => ['form-row-wide', 'hidden'],
             'clear' => true,
+            'priority' => 101,
         ];
         $fields['billing']['billing_okhi_property_number'] = [
             'label' => __('Property number', 'woocommerce'),
             'required' => false,
             'class' => ['form-row-wide', 'hidden'],
             'clear' => true,
+            'priority' => 102,
         ];
         $fields['billing']['billing_okhi_lat'] = [
             'label' => __('Latitude', 'woocommerce'),
             'required' => false,
-            'class' => ['form-row-wide', 'hidden'],
+            'class' => ['form-row', 'hidden'],
             'clear' => true,
+            'priority' => 103,
         ];
         $fields['billing']['billing_okhi_lon'] = [
             'label' => __('Longitude', 'woocommerce'),
             'required' => false,
-            'class' => ['form-row-wide', 'hidden'],
+            'class' => ['form-row', 'hidden'],
             'clear' => true,
+            'priority' => 104,
         ];
         $fields['billing']['billing_okhi_place_id'] = [
             'label' => __('OkHi Place ID', 'woocommerce'),
             'required' => false,
             'class' => ['form-row-wide', 'hidden'],
             'clear' => true,
+            'priority' => 105,
         ];
         $fields['billing']['billing_okhi_id'] = [
             'label' => __('OkHi ID', 'woocommerce'),
             'required' => false,
             'class' => ['form-row-wide', 'hidden'],
             'clear' => true,
-        ];
-        $fields['billing']['billing_okhi_token'] = [
-            'label' => __('OkHi Token', 'woocommerce'),
-            'required' => false,
-            'class' => ['form-row-wide', 'hidden'],
-            'clear' => true,
+            'priority' => 106,
         ];
         $fields['billing']['billing_okhi_url'] = [
             'label' => __('OkHi URL', 'woocommerce'),
             'required' => false,
             'class' => ['form-row-wide', 'hidden'],
             'clear' => true,
+            'priority' => 107,
+        ];
+
+        $fields['billing']['billing_okhi_state'] = [
+            'label' => __('State', 'woocommerce'),
+            'required' => false,
+            'class' => ['form-row-wide', 'hidden'],
+            'clear' => true,
+            'priority' => 108,
+        ];
+
+        $fields['billing']['billing_okhi_neighborhood'] = [
+            'label' => __('Neighborhood', 'woocommerce'),
+            'required' => false,
+            'class' => ['form-row-wide', 'hidden'],
+            'clear' => true,
+            'priority' => 109,
         ];
         // remove irrelevant fields
-        unset($fields['billing']['billing_company']);
-        unset($fields['billing']['billing_address_2']);
+        // $fields['billing']['billing_okhi_lat']['priority'] = 8;
+        // $fields['billing']['billing_okhi_lon']['priority'] = 9;
+        // $fields['billing']['billing_okhi_street_name']['priority'] = 10;
+        // $fields['billing']['billing_okhi_id']['priority'] = 11;
+        // $fields['billing']['billing_okhi_url']['priority'] = 12;
+        // $fields['billing']['billing_okhi_property_name']['priority'] = 13;
+        // $fields['billing']['billing_okhi_property_number']['priority'] = 14;
+
         unset($fields['billing']['billing_state']);
-        $fields['billing']['billing_first_name']['priority'] = 1;
-        $fields['billing']['billing_last_name']['priority'] = 2;
-        $fields['billing']['billing_country']['priority'] = 4;
-        $fields['billing']['billing_state']['priority'] = 5;
-        $fields['billing']['billing_okhi_street_name']['priority'] = 6;
-        $fields['billing']['billing_city']['priority'] = 8;
-        $fields['billing']['billing_postcode']['priority'] = 9;
-        $fields['billing']['billing_email']['priority'] = 10;
-        $fields['billing']['billing_phone']['priority'] = 11;
         return $fields;
     }
 
@@ -274,13 +291,6 @@ class WC_OkHi_Checkout
                 sanitize_text_field($_POST['billing_okhi_id'])
             );
         }
-        if (!empty($_POST['billing_okhi_token'])) {
-            update_post_meta(
-                $order_id,
-                'billing_okhi_token',
-                sanitize_text_field($_POST['billing_okhi_token'])
-            );
-        }
         if (!empty($_POST['billing_okhi_url'])) {
             update_post_meta(
                 $order_id,
@@ -293,6 +303,13 @@ class WC_OkHi_Checkout
                 $order_id,
                 'billing_okhi_state',
                 sanitize_text_field($_POST['billing_okhi_state'])
+            );
+        }
+        if (!empty($_POST['billing_okhi_neighborhood'])) {
+            update_post_meta(
+                $order_id,
+                'billing_okhi_neighborhood',
+                sanitize_text_field($_POST['billing_okhi_neighborhood'])
             );
         }
     }
@@ -315,18 +332,24 @@ class WC_OkHi_Checkout
     public function okhi_checkout_field_display_admin_order_meta($order)
     {
         echo '<p><strong>' .
+            __('State') .
+            ':</strong> <br/><span>' .
+            get_post_meta($order->get_id(), 'billing_okhi_state', true) .
+            '</span></p>';
+
+        echo '<p><strong>' .
+            __('Neighborhood') .
+            ':</strong> <br/><span>' .
+            get_post_meta($order->get_id(), 'billing_okhi_neighborhood', true) .
+            '</span></p>';
+
+        echo '<p><strong>' .
             __('OkHi URL') .
             ':</strong> <br/><a href="' .
             get_post_meta($order->get_id(), 'billing_okhi_url', true) .
             '" target="_blank">' .
             get_post_meta($order->get_id(), 'billing_okhi_url', true) .
             '</a></p>';
-
-        echo '<p><strong>' .
-            __('State') .
-            ':</strong> <br/><span>' .
-            get_post_meta($order->get_id(), 'billing_okhi_state', true) .
-            '</span></p>';
     }
     /**
      * change checkout page titles

@@ -7,10 +7,7 @@ class WC_OkHi_Send_Checkout
          * for insights
          * post the location interaction to OkHi
          */
-        add_action('woocommerce_thankyou', array(
-            $this,
-            'okhi_send_order_details'
-        ));
+        add_action('woocommerce_thankyou', [$this, 'okhi_send_order_details']);
     }
 
     // function post_without_wait($url, $data, $api_key)
@@ -25,19 +22,16 @@ class WC_OkHi_Send_Checkout
         $order_meta = get_post_meta($order_id);
         // $basket = okhi_compose_basket_data($order);
         $user_id = $order->get_user_id();
-        $data = array(
-            'user' => array(
+        $data = [
+            'user' => [
                 'first_name' => $order->get_billing_first_name(),
                 'last_name' => $order->get_billing_last_name(),
-                'phone' => $order->get_billing_phone()
-            ),
+                'phone' => $order->get_billing_phone(),
+            ],
             'id' => (string) $order->get_id(),
-            'location' => array(
+            'location' => [
                 'id' => isset($order_meta['billing_okhi_id'])
                     ? $order_meta['billing_okhi_id'][0]
-                    : '',
-                'token' => isset($order_meta['billing_okhi_token'][0])
-                    ? $order_meta['billing_okhi_token'][0]
                     : '',
                 'street_name' => isset(
                     $order_meta['billing_okhi_street_name'][0]
@@ -54,52 +48,51 @@ class WC_OkHi_Send_Checkout
                 )
                     ? $order_meta['billing_okhi_property_number'][0]
                     : '',
-                'geo_point' => array(
+                'geo_point' => [
                     'lat' => isset($order_meta['billing_okhi_lat'][0])
                         ? floatval($order_meta['billing_okhi_lat'][0])
                         : 0,
                     'lon' => isset($order_meta['billing_okhi_lon'][0])
                         ? floatval($order_meta['billing_okhi_lon'][0])
-                        : 0
-                ),
+                        : 0,
+                ],
                 'place_id' => isset($order_meta['billing_okhi_place_id'][0])
                     ? $order_meta['billing_okhi_place_id'][0]
-                    : ''
-            ),
+                    : '',
+            ],
             'value' => floatval($order->get_total()),
             'use_case' => 'e-commerce',
-            'properties' => array(
-                'send_to_queue' => WC_OKHI_SEND_TO_QUEUE,
+            'properties' => [
                 'payment_method' => $order->get_payment_method(),
                 'currency' => function_exists('get_woocommerce_currency')
                     ? get_woocommerce_currency()
                     : '',
                 // "basket" => $basket,
                 'user_id' => isset($user_id) ? $user_id : '',
-                'shipping' => array(
+                'shipping' => [
                     'cost' => $order->get_shipping_total(),
-                    'method' => $order->get_shipping_method()
+                    'method' => $order->get_shipping_method(),
                     // TODO add zone
-                )
-            )
-        );
+                ],
+            ],
+        ];
 
-        $args = array(
+        $args = [
             'body' => json_encode($data),
             // 'timeout' => '5',
             // 'redirection' => '5',
             'httpversion' => '1.0',
             'blocking' => false,
             'data_format' => 'body',
-            'headers' => array(
+            'headers' => [
                 'Content-Type' => 'application/json; charset=utf-8',
                 'authorization' =>
                     'Token ' .
                     base64_encode(
                         WC_OKHI_BRANCH_ID . ':' . WC_OKHI_SERVER_API_KEY
-                    )
-            )
-        );
+                    ),
+            ],
+        ];
         $response = wp_remote_post(
             wc_okhi()->okhi_base_url() . '/interactions',
             $args
