@@ -127,7 +127,7 @@ final class WC_OkHi
         if (WC_OKHI_ENVIRONMENT == 'production') {
             return 'https://api.okhi.io/v5';
         } else {
-            return 'https://dev-api.okhi.io/v5';
+            return 'https://sandbox-api.okhi.io/v5';
         }
     }
 

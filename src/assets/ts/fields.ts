@@ -3,6 +3,8 @@ export class OkHiFields {
     static billingLastNameField = '#billing_last_name';
     static billingFirstNameField = '#billing_first_name';
     static requiredAddressField = '#billing_address_1';
+    static addressLine2Field = '#billing_address_2';
+    static billingCompany = '#billing_company';
     static billingPostcodeField = '#billing_postcode';
     static billingOtherInformationField = '#order_comments';
     static billingStreetNameField = '#billing_okhi_street_name';
@@ -16,6 +18,7 @@ export class OkHiFields {
     static billingOkHiURLField = '#billing_okhi_url';
     static locationCardContainerElement = '#selected-location-card';
     static errorElement = '#okhi-errors';
+    static billingOkHiNeighborhoodField = '#billing_okhi_neighborhood';
     static billingStateField = '#billing_okhi_state';
     static billingCityField = '#billing_city';
 }

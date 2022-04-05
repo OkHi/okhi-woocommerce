@@ -1,9 +1,12 @@
 import { OkHiFields } from '../fields';
 import { Location } from '../interfaces/location.interface';
 import { okCollectErrorHandler } from './errorHandler';
+import { resetOkHiFields } from './reset-fields';
 
 export const okCollectSuccessHandler = (data: Location) => {
     okCollectErrorHandler(null);
+
+    resetOkHiFields();
     const billingPostcodeField = jQuery(OkHiFields.billingPostcodeField);
     const billingOtherInformationField = jQuery(
         OkHiFields.billingOtherInformationField
@@ -21,8 +24,11 @@ export const okCollectSuccessHandler = (data: Location) => {
     const billingOkHiIdField = jQuery(OkHiFields.billingOkHiIdField);
     const billingOkHiURLField = jQuery(OkHiFields.billingOkHiURLField);
     const requiredAddressField = jQuery(OkHiFields.requiredAddressField);
-    const billingOkHiTokenField = jQuery(OkHiFields.billingOkHiTokenField);
-
+    const billingOkHiNeighborhoodField = jQuery(
+        OkHiFields.billingOkHiNeighborhoodField
+    );
+    const addressLine2Field = jQuery(OkHiFields.addressLine2Field);
+    const billingCompany = jQuery(OkHiFields.billingCompany);
     const billingStateField = jQuery(OkHiFields.billingStateField);
     const billingCityField = jQuery(OkHiFields.billingCityField);
     // handle your success here with the data you get back
@@ -40,9 +46,11 @@ export const okCollectSuccessHandler = (data: Location) => {
         other_information: otherInformation,
         plus_code: plusCode,
         place_id,
-        token,
         city,
-        state
+        state,
+        neighborhood,
+        unit,
+        business_name: businessName
     } = data;
 
     const addressTextData = [];
@@ -99,9 +107,6 @@ export const okCollectSuccessHandler = (data: Location) => {
     if (typeof billingOkHiIdField !== 'undefined') {
         billingOkHiIdField.val(id || '');
     }
-    if (typeof billingOkHiTokenField !== 'undefined') {
-        billingOkHiTokenField.val(token || '');
-    }
     if (typeof billingOkHiURLField !== 'undefined') {
         billingOkHiURLField.val(url || '');
     }
@@ -111,6 +116,18 @@ export const okCollectSuccessHandler = (data: Location) => {
     }
     if (typeof billingStateField !== 'undefined' && state) {
         billingStateField.val(state);
+    }
+
+    if (typeof addressLine2Field !== 'undefined' && unit) {
+        addressLine2Field.val(unit);
+    }
+
+    if (typeof billingCompany !== 'undefined' && businessName) {
+        billingCompany.val(businessName);
+    }
+
+    if (typeof billingOkHiNeighborhoodField !== 'undefined' && neighborhood) {
+        billingOkHiNeighborhoodField.val(neighborhood);
     }
 
     // trigger calculation of shipping costs
