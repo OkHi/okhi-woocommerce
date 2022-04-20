@@ -79,7 +79,9 @@ export const okCollectSuccessHandler = (data: Location) => {
         billingPostcodeField.val(plusCode);
     }
     if (typeof billingStreetNameField !== 'undefined' && streetName) {
-        billingStreetNameField.val(streetName);
+        billingStreetNameField.val(
+            streetName.replace(/(^\w|\s\w)/g, (m) => m.toUpperCase())
+        );
     }
     if (typeof billingPropertyNameField !== 'undefined' && propertyName) {
         billingPropertyNameField.val(propertyName);
@@ -112,10 +114,14 @@ export const okCollectSuccessHandler = (data: Location) => {
     }
 
     if (typeof billingCityField !== 'undefined' && city) {
-        billingCityField.val(city);
+        billingCityField.val(
+            city.replace(/(^\w|\s\w)/g, (m) => m.toUpperCase())
+        );
     }
     if (typeof billingStateField !== 'undefined' && state) {
-        billingStateField.val(state);
+        billingStateField.val(
+            state.replace(/(^\w|\s\w)/g, (m) => m.toUpperCase())
+        );
     }
 
     if (typeof addressLine2Field !== 'undefined' && unit) {
@@ -127,7 +133,9 @@ export const okCollectSuccessHandler = (data: Location) => {
     }
 
     if (typeof billingOkHiNeighborhoodField !== 'undefined' && neighborhood) {
-        billingOkHiNeighborhoodField.val(neighborhood);
+        billingOkHiNeighborhoodField.val(
+            neighborhood.replace(/(^\w|\s\w)/g, (m) => m.toUpperCase())
+        );
     }
 
     // trigger calculation of shipping costs
