@@ -64,7 +64,11 @@ export const okCollectSuccessHandler = (data: Location) => {
         addressTextData.push(directions);
     }
     if (streetName) {
-        addressTextData.push(streetName);
+        const capitalisedStreetName = streetName.replace(/(^\w|\s\w)/g, (m) =>
+            m.toUpperCase()
+        );
+
+        addressTextData.push(capitalisedStreetName);
     }
     if (typeof requiredAddressField !== 'undefined') {
         requiredAddressField.val(addressTextData.join(', ').trim());
@@ -79,7 +83,9 @@ export const okCollectSuccessHandler = (data: Location) => {
         billingPostcodeField.val(plusCode);
     }
     if (typeof billingStreetNameField !== 'undefined' && streetName) {
-        billingStreetNameField.val(streetName);
+        billingStreetNameField.val(
+            streetName.replace(/(^\w|\s\w)/g, (m) => m.toUpperCase())
+        );
     }
     if (typeof billingPropertyNameField !== 'undefined' && propertyName) {
         billingPropertyNameField.val(propertyName);
@@ -112,10 +118,14 @@ export const okCollectSuccessHandler = (data: Location) => {
     }
 
     if (typeof billingCityField !== 'undefined' && city) {
-        billingCityField.val(city);
+        billingCityField.val(
+            city.replace(/(^\w|\s\w)/g, (m) => m.toUpperCase())
+        );
     }
     if (typeof billingStateField !== 'undefined' && state) {
-        billingStateField.val(state);
+        billingStateField.val(
+            state.replace(/(^\w|\s\w)/g, (m) => m.toUpperCase())
+        );
     }
 
     if (typeof addressLine2Field !== 'undefined' && unit) {
@@ -123,11 +133,15 @@ export const okCollectSuccessHandler = (data: Location) => {
     }
 
     if (typeof billingCompany !== 'undefined' && businessName) {
-        billingCompany.val(businessName);
+        billingCompany.val(
+            businessName.replace(/(^\w|\s\w)/g, (m) => m.toUpperCase())
+        );
     }
 
     if (typeof billingOkHiNeighborhoodField !== 'undefined' && neighborhood) {
-        billingOkHiNeighborhoodField.val(neighborhood);
+        billingOkHiNeighborhoodField.val(
+            neighborhood.replace(/(^\w|\s\w)/g, (m) => m.toUpperCase())
+        );
     }
 
     // trigger calculation of shipping costs
