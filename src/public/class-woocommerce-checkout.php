@@ -331,25 +331,38 @@ class WC_OkHi_Checkout
 
     public function okhi_checkout_field_display_admin_order_meta($order)
     {
-        echo '<p><strong>' .
-            __('State') .
-            ':</strong> <br/><span>' .
-            get_post_meta($order->get_id(), 'billing_okhi_state', true) .
-            '</span></p>';
-
-        echo '<p><strong>' .
-            __('Neighborhood') .
-            ':</strong> <br/><span>' .
-            get_post_meta($order->get_id(), 'billing_okhi_neighborhood', true) .
-            '</span></p>';
-
-        echo '<p><strong>' .
-            __('OkHi URL') .
-            ':</strong> <br/><a href="' .
-            get_post_meta($order->get_id(), 'billing_okhi_url', true) .
-            '" target="_blank">' .
-            get_post_meta($order->get_id(), 'billing_okhi_url', true) .
-            '</a></p>';
+        $state = trim(
+            get_post_meta($order->get_id(), 'billing_okhi_state', true)
+        );
+        $neighborhood = trim(
+            get_post_meta($order->get_id(), 'billing_okhi_neighborhood', true)
+        );
+        $okhiUrl = trim(
+            get_post_meta($order->get_id(), 'billing_okhi_url', true)
+        );
+        if (!empty($state)) {
+            echo '<p><strong>' .
+                __('State') .
+                ':</strong> <br/><span>' .
+                $state .
+                '</span></p>';
+        }
+        if (!empty($neighborhood)) {
+            echo '<p><strong>' .
+                __('Neighborhood') .
+                ':</strong> <br/><span>' .
+                $neighborhood .
+                '</span></p>';
+        }
+        if (!empty($okhiUrl)) {
+            echo '<p><strong>' .
+                __('OkHi URL') .
+                ':</strong> <br/><a href="' .
+                $okhiUrl .
+                '" target="_blank">' .
+                $okhiUrl .
+                '</a></p>';
+        }
     }
     /**
      * change checkout page titles

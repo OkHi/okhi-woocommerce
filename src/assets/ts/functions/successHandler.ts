@@ -64,7 +64,11 @@ export const okCollectSuccessHandler = (data: Location) => {
         addressTextData.push(directions);
     }
     if (streetName) {
-        addressTextData.push(streetName);
+        const capitalisedStreetName = streetName.replace(/(^\w|\s\w)/g, (m) =>
+            m.toUpperCase()
+        );
+
+        addressTextData.push(capitalisedStreetName);
     }
     if (typeof requiredAddressField !== 'undefined') {
         requiredAddressField.val(addressTextData.join(', ').trim());
