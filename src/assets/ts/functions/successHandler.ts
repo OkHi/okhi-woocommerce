@@ -133,7 +133,9 @@ export const okCollectSuccessHandler = (data: Location) => {
     }
 
     if (typeof billingCompany !== 'undefined' && businessName) {
-        billingCompany.val(businessName);
+        billingCompany.val(
+            businessName.replace(/(^\w|\s\w)/g, (m) => m.toUpperCase())
+        );
     }
 
     if (typeof billingOkHiNeighborhoodField !== 'undefined' && neighborhood) {
